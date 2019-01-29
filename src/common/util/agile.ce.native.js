@@ -1615,7 +1615,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.refresh(el);
 		},
 		setStyle: function setStyle(el, styleName, styleValue) {
-			el.setStyle(styleName, styleValue);
+			if(styleValue){
+				el.setStyle(styleName, styleValue);
+			}else{
+				el.clearStyle(styleName);
+			}
 			this.refresh(el);
 		},
 		refresh: function refresh(el) {

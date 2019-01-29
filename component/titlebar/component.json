@@ -1,7 +1,0 @@
-{
-    "id": "titlebar",
-    "name": "标题栏",
-    "require_id": "titlebarUI",
-    "index": "titlebar.bcp",
-    "version": "1.0.3"
-}

@@ -117,6 +117,9 @@
                             }else{
                                 if(inputDom.isFocus()) inputDom.setBlur();
                             }
+                        },
+                        init: function(){
+                            if($jsDom.hasAttr('focus')) this.handler(com.getAttrValue('focus'));
                         }
                     }
                 };

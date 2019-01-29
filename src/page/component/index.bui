@@ -17,6 +17,7 @@
             require('../../axicomponent/radio/axi-radio-group.bcp');
             require('../../axicomponent/input/axi-input.bcp');
             require('../../axicomponent/textarea/axi-textarea.bcp');
+            require('../../axicomponent/switch/axi-switch.bcp');
 
 
             var Page = require('../../axicomponent/util.js').Page;
@@ -192,6 +193,9 @@
                     <axi-input v-bind:focus="inputFocus" disabled="false" maxlength="-1" placeholder-color="blue" type="text" password="true" v-on:input="method.input" v-on:focus="method.focus" placeholder="请输入文本"></axi-input>
                     <axi-text v-text="'有多少行数据？答：'+line"></axi-text>
                     <axi-textarea v-on:linechange="method.linechange" auto-height="true" maxlength="-1" placeholder="请输入文本"></axi-textarea>
+
+
+                    <axi-switch checked="true"></axi-switch>
                 
                 </axi-view>
 

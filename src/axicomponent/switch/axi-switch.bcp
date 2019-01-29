@@ -1,0 +1,144 @@
+<page>
+    <module>
+        <![CDATA[
+    
+        ]]>
+    </module>
+    <script>
+        <![CDATA[
+        var console = require('Console');
+
+        var Component = require('../util.js').Component;
+
+        function MyView(){
+
+        }
+
+        MyView.prototype = {
+            initProto: function(){
+                var $jsDom = this.$jsDom, $ = this.$, comp = this, root = this.root, $root = this.$root;
+
+                var $mask = $jsDom.find('#mask'), $out = $jsDom.find('#out'), $btn = $jsDom.find('#btn'), btn = $btn[0];
+
+                var defaultCheckedColor = '#1aad19';
+                var defaultBorderColor = '#ececec';
+
+                var props = this.props = {
+                    'checked': {
+                        // memo: '是否选中',
+                        type: Boolean,
+                        value: false,
+                        handler: function(val){
+                            $jsDom[val?'addClass':'removeClass']('checked');
+                            // var checkedColor = comp.getAttrValue('color') || defaultCheckedColor;
+                            // $out.css({
+                            //     'background-color': val ? checkedColor : 'transparent', 
+                            //     'border-width': val ? '0' : '1'
+                            // });
+                            // $btn.css({
+                            //     'right': val? '0' : '', 
+                            //     'left': val?'':'',
+                            //     'border-width': val?'0':'1'
+                            // });
+                        }
+                    },
+                    'disabled': {
+                        // memo: '是否禁用',
+                        type: Boolean,
+                        value: false,
+                        handler: function(val){
+                            $mask[val?'show':'hide']();
+                        },
+                        init: function(){
+                            $mask.on('click', function(){});
+                            if($jsDom.hasAttr('disabled')) this.handler(comp.getAttrValue('disabled'));
+                        }
+                    },
+                    'type': {
+                        // memo: '样式，有效值：switch, checkbox',
+                        type: String,
+                        value: 'switch',
+                        handler: function(val){
+                            
+                        }
+                    },
+                    'color': {
+                        // memo: 'switch 的颜色，同 css 的 color',
+                        type: String,
+                        handler: function(val){
+                            // $out.css('background-color', val);
+                        },
+                        init: function(){
+                            if($jsDom.hasAttr('color')) this.handler(comp.getAttrValue('color'));
+                        }
+                    }
+                };
+
+                this.events = {
+                    'change': {
+                        memo: 'checked 改变时触发 change 事件，event.detail={ value:checked}	',
+                        handler: function(){
+                            $jsDom.on('click', function(){
+                                var val = comp.getAttrValue('checked');
+                                $jsDom.attr('checked', !val);
+                            });
+                        }
+                    }
+                };
+            }
+        };
+
+        
+        module.exports = Component(MyView);
+
+    ]]>
+    </script>
+    <style>
+    axi-switch{
+        width: 55;
+        height: 32;
+    }
+
+    axi-switch .private-axi-switch-out{
+        position: absolute;
+        width: 100%;
+        height: 32;
+        border-radius: 16;
+        border-width: 5;
+        border-color: #ececec;
+        background-color: #1aad19;
+    }
+    /* axi-switch.checked .private-axi-switch-out{
+        background-color: #1aad19;
+    } */
+
+    axi-switch .private-axi-switch-btn{
+        position: absolute;
+        width:30;
+        height: 30;
+        border-radius: 15;
+        border-width: 1;
+        border-color: #ececec;
+        background-color: #ffffff;
+        margin: 1;
+    }
+    /* axi-switch.checked .private-axi-switch-btn{
+        background-color: #1aad19;
+        right: 1;
+        border-width: 0;
+    } */
+
+    .private-axi-switch-mask{
+        display: none;
+        width: 100%;
+        height: 100%;
+    }
+    </style>
+    <ui>
+        <box>
+            <box id="out" class="private-axi-switch-out"></box>
+            <box id="btn" class="private-axi-switch-btn"></box>
+            <box id="mask" class="private-axi-switch-mask"></box>
+        </box>
+    </ui>
+</page>
