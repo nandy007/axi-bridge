@@ -1,25 +1,25 @@
 <page>
     <script>
         <![CDATA[
-            require('../../auicomponent/axi-test.bcp');
-            require('../../auicomponent/view/axi-view.bcp');
-            require('../../auicomponent/scroll-view/axi-scroll-view.bcp');
-            require('../../auicomponent/swiper/axi-swiper.bcp');
-            require('../../auicomponent/swiper/axi-swiper-item.bcp');
-            require('../../auicomponent/text/axi-text.bcp');
-            require('../../auicomponent/progress/axi-progress.bcp');
-            require('../../auicomponent/icon/axi-icon.bcp');
-            require('../../auicomponent/button/axi-button.bcp');
-            require('../../auicomponent/checkbox/axi-checkbox.bcp');
-            require('../../auicomponent/checkbox/axi-checkbox-group.bcp');
-            require('../../auicomponent/label/axi-label.bcp');
-            require('../../auicomponent/radio/axi-radio.bcp');
-            require('../../auicomponent/radio/axi-radio-group.bcp');
-            require('../../auicomponent/input/axi-input.bcp');
-            require('../../auicomponent/textarea/axi-textarea.bcp');
+            require('../../extcomponent/axi-test.bcp');
+            require('../../axicomponent/view/axi-view.bcp');
+            require('../../axicomponent/scroll-view/axi-scroll-view.bcp');
+            require('../../axicomponent/swiper/axi-swiper.bcp');
+            require('../../axicomponent/swiper/axi-swiper-item.bcp');
+            require('../../axicomponent/text/axi-text.bcp');
+            require('../../axicomponent/progress/axi-progress.bcp');
+            require('../../axicomponent/icon/axi-icon.bcp');
+            require('../../axicomponent/button/axi-button.bcp');
+            require('../../axicomponent/checkbox/axi-checkbox.bcp');
+            require('../../axicomponent/checkbox/axi-checkbox-group.bcp');
+            require('../../axicomponent/label/axi-label.bcp');
+            require('../../axicomponent/radio/axi-radio.bcp');
+            require('../../axicomponent/radio/axi-radio-group.bcp');
+            require('../../axicomponent/input/axi-input.bcp');
+            require('../../axicomponent/textarea/axi-textarea.bcp');
 
 
-            var Page = require('../../auicomponent/util.js').Page;
+            var Page = require('../../axicomponent/util.js').Page;
             var console = require("Console");
             var document = require("Document");
             var time = require('Time');
@@ -41,14 +41,14 @@
                     time.setTimeout(function() {
                         // $('axi-scroll-view').attr('scroll-into-view', "aaa");
                         // $('#p').attr('percent', 100);
-                        viewData.data.percent = 100;
+                        comp.data.percent = 100;
                         // $('axi-scroll-view').show();
                         // console.log($('axi-scroll-view').css('display'))
                         
-                        viewData.data.list.push({title:'这是标题4'})
-                        comp.setData({data:{
-                            list: viewData.data.list
-                        }});
+                        comp.data.list.push({title:'这是标题4'})
+                        comp.setData({
+                            list: comp.data.list
+                        });
 
                         // viewData.data.inputFocus = true;
 
@@ -86,10 +86,10 @@
                                 
                             },
                             linechange: function(e){
-                                this.setData({data:{
+                                this.setData({
                                     line: e.detail.height
-                                }});
-                                // this.viewData.data.title = 33333
+                                });
+                                this.data.title = 33333
                                 // console.log(this.viewData.data.title);
                             }
                         },
@@ -221,7 +221,7 @@
                 </axi-swiper>
                 <axi-view v-for="item in list" class="myview" hover-class="hoverclass" v-on:touchDown="method.doTouchDown($index)"><text>{{item.title}}</text></axi-view>
                 <box style="width:400;height:1000;"></box>
-                <box id="aaa"><text>dasdasdas</text></box>
+                <box id="aaa"><text>dasdasdas</text></box> -->
             </axi-scroll-view>
 
         </box>

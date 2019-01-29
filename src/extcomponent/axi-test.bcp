@@ -6,10 +6,10 @@
     </module>
     <script>
         <![CDATA[
-        require('./view/axi-view.bcp');
+        require('../axicomponent/view/axi-view.bcp');
         var console = require('Console');
 
-        var Component = require('./util.js').Component;
+        var Component = require('../axicomponent/util.js').Component;
 
         function MyView(){
             
@@ -23,12 +23,15 @@
                 this.viewData = {};
             },
             initProto: function(){
+                this.viewData = {
+
+                };
                 this.properties = {
                     'list': {
                         type: Object,
                         value: []
                     }
-                }
+                };
             }
         };
 
