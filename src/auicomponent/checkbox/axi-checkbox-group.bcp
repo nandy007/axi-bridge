@@ -1,0 +1,66 @@
+<page>
+    <module>
+        <![CDATA[
+    
+        ]]>
+    </module>
+    <script>
+        <![CDATA[
+
+        var console = require('Console');
+
+        var Component = require('../util.js').Component;
+
+        function MyView(){
+
+        }
+
+        MyView.prototype = {
+            initProto: function(){
+
+                var comp = this, $jsDom = this.$jsDom, $rootDom = this.$(this.jsDom.getRootElement());
+
+                this.events = {
+                    'change': {
+                        // memo: '点击事件，切换checked状态',
+                        handler: function(){
+                            $jsDom.on('__change__', function(e){
+                                var $cks = $rootDom.find('axi-checkbox'), vals = [];
+                                $cks.each(function(){
+                                    var ckComp = this.component;
+                                    if(ckComp.getAttrValue('checked')){
+                                        vals.push(ckComp.getAttrValue('value'));
+                                    }
+                                });
+                                
+                                $jsDom[0].fireExtend('change', {
+                                    detail: {
+                                        value: vals
+                                    }
+                                });
+                            });
+                        }
+                    }
+                };
+
+            }
+        };
+
+        
+        module.exports = Component(MyView);
+
+    ]]>
+    </script>
+    <style>
+    axi-checkbox-group{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+    </style>
+    <ui>
+        <box>
+            <slot></slot>
+        </box>
+    </ui>
+</page>

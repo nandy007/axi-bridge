@@ -1,0 +1,86 @@
+.flex1{
+	flex:1;
+}
+.flex2{
+	flex:2;
+}
+
+
+.margin2{
+	margin:2;
+}
+
+.margin4{
+	margin:4;
+}
+
+.margin6{
+	margin:6;
+}
+
+
+.radius2{
+	border-radius:2;
+}
+
+.radius4{
+	border-radius:4;
+}
+
+
+.row-flex-center{
+	flex-direction:row;
+	justify-content:center;	
+	align-items:center;
+}
+
+.column-flex-center{
+	flex-direction:column;
+	justify-content:center;
+	align-items:center;
+}
+.gridmenu{
+  cell-scale:1;
+}
+
+.gridmenu-item-tip{
+    flex-direction:row;
+	align-items:center;
+	height:20;
+	justify-content:center;
+	border-radius:10;
+	position:absolute;
+	top:4;
+    right: 15;
+}
+
+
+.gridmenu-item-tip-small
+{
+        width:10;
+        height:10;
+        border-radius: 5;      
+        position:absolute;
+        top:4;
+        left: 60;
+}
+
+.gridmenu-item-tip-text{
+	line-space:0dp;
+	font-size:12;
+	margin:0 7 0 7;
+}
+
+.gridmenu-image{
+	width:45;
+	height:45;
+	margin: 8 24 4 24;
+}
+
+
+.absolute{
+	position:absolute;
+	top:0;
+	left:0;
+	
+}

@@ -1,0 +1,212 @@
+<page>
+    <module>
+        <![CDATA[
+    
+        ]]>
+    </module>
+    <script>
+        <![CDATA[
+        var console = require('Console');
+
+        var Component = require('../util.js').Component;
+
+        var dotsTpl = '<box id="sliderDots" vmignoreroot="true" class="private-axi-slider-dots"><box class="private-axi-slider-dot" v-for="item in list" v-style="{\'background-color\':item.bgColor}"></box></box>'
+
+        function MyView(){
+
+        }
+
+        MyView.prototype = {
+            initProto: function(){
+                var jsDom = this.jsDom, $ = this.$, comp = this, rootDom = jsDom.getRootElement(), $root = $(rootDom), sliderDom = rootDom.getChildren()[0], $slider = $(sliderDom);
+                var defaultIndex = 0;
+
+                function createDotData(active){
+                    return {
+                        bgColor: active ? comp.getAttrValue('indicator-active-color') : comp.getAttrValue('indicator-color')
+                    };
+                }
+
+                function CreateDotsData(len, curIndex){
+                    var arr = [];
+                    for(var i=0;i<len;i++){
+                        arr.push(createDotData(i===curIndex));
+                    }
+                    dotsData.data.list = arr;
+                }
+
+                function changeDots(index){
+                    var activeColor = comp.getAttrValue('indicator-active-color'), color = comp.getAttrValue('indicator-color');
+                    for(var i=0, len=dotsData.data.list.length;i<len;i++){
+                        if(i===index){
+                            dotsData.data.list[i].bgColor = activeColor;
+                        }else{
+                            dotsData.data.list[i].bgColor = color;
+                        }
+                    }
+                }
+
+                var dotsData = {
+                    data:{
+                        list: []
+                    }
+                };
+
+                var props = this.props = {
+                    'type': {
+                        // memo: 'slider显示模式,bridge属性，当为gallery时对应wx小程序的previous-margin和next-margin',
+                        type: String,
+                        value: 'normal',
+                        enum: ['normal', 'zoom', 'depth', 'gallery'],
+                        handler: function(val){
+                            $slider.attr('type', val);
+                        }
+                    },
+                    'vertical': {
+                        // memo: '滑动方向是否为纵向',
+                        type: Boolean,
+                        value: false,
+                        handler: function(val){
+                            $slider.attr('direction', val?'vertical':'horizontal');
+                        }
+                    },
+                    'autoplay': {
+                        // memo: '是否自动切换',
+                        type: Boolean,
+                        value: false,
+                        handler: function(val){
+                            $slider.attr('autoPlay', val);
+                        }
+                    },
+                    'interval': {
+                        // memo: '自动切换时间间隔',
+                        type: Number,
+                        value: 5000,
+                        handler: function(val){
+                            $slider.attr('interval', val);
+                        }
+                    },
+                    'current': {
+                        // memo: '当前所在滑块的 index',
+                        type: Number,
+                        value: 0,
+                        handler: function(val){
+                            defaultIndex = val;
+                            if(String(val)===$slider.attr('index')) return;
+                            $slider.attr('index', val);
+                            changeDots(val);
+                        },
+                        init: function(){
+                            if(jsDom.hasAttr('current')){
+                                props.current.handler(comp.getAttrValue('current'));
+                            }
+                        }
+                    },
+                    'current-item-id': {
+                        // memo: '当前所在滑块的 item-id ，不能与 current 被同时指定',
+                        type: String,
+                        value: 0,
+                        handler: function(val){
+                            var children = sliderDom.getChildren(), len = children.length, targetIndex = null;
+                            for(var i=0;i<len;i++){
+                                if(children[i].getId()===val){
+                                    targetIndex = i;
+                                    break;
+                                }
+                            }
+                            if(targetIndex===null) return;
+                            defaultIndex = val = targetIndex;
+                            if(String(val)===$slider.attr('index')) return;
+                            $slider.attr('index', val);
+                            changeDots(val);
+                        },
+                        init: function(){
+                            if(jsDom.hasAttr('current-item-id')){
+                                this.handler(comp.getAttrValue('current-item-id'));
+                            }
+                        }
+                    },
+                    'indicator-dots': {
+                        // memo: '是否显示面板指示点',
+                        type: Boolean,
+                        value: false,
+                        handler: function(val){
+                            var $sliderDots = $root.children('#sliderDots');
+                            if(val){
+                                if($sliderDots.length===1) return $sliderDots.show();
+                                var $dots = $.parseHTML(dotsTpl);
+                                CreateDotsData($slider.children().length || 2, comp.getAttrValue('current'));
+                                $root.append($dots);
+                                $dots.render(dotsData);
+                            }else{
+                                $sliderDots.hide();
+                            }
+                        }
+                    },
+                    'indicator-color': {
+                        // memo: '指示点颜色',
+                        type: String,
+                        value: 'rgba(0, 0, 0, .3)'
+                    },
+                    'indicator-active-color': {
+                        // memo: '当前选中的指示点颜色',
+                        type: String,
+                        value: '#000000'
+                    }
+                };
+
+                this.events = {
+                    'change': {
+                        memo: 'current 改变时会触发 change 事件，event.detail = {current: current, source: source}',
+                        handler: function(){
+                            sliderDom.on('pageSelected', function(e, curIndex){
+                                // var curIndex = $slider.attr('index');
+                                jsDom.setAttr('current', curIndex);
+                                changeDots(curIndex);
+                                jsDom.fireExtend('change', {
+                                    detail: {
+                                        current: curIndex, 
+                                        source: 'touch'
+                                    }
+                                });
+                            });
+                        }
+                    }
+                };
+
+
+                $slider.on('__domchange__', function(){
+                    $slider.attr('index', comp.getAttrValue('current'));
+                    CreateDotsData($slider.children().length, comp.getAttrValue('current'));
+                });
+            }
+        };
+
+        
+        module.exports = Component(MyView);
+
+    ]]>
+    </script>
+    <style>
+        .private-axi-slider-dots{
+            position:absolute;
+            bottom:10;
+            width:100%;
+            flex-direction:row;
+            justify-content:center;
+        }
+        .private-axi-slider-dot{
+            width:10;
+            height:10;
+            border-radius:5;
+            margin:4;
+        }
+    </style>
+    <ui>
+        <box>
+            <slider style="height:100%;">
+                <slot></slot>
+            </slider>
+        </box>
+    </ui>
+</page>

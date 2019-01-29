@@ -1,0 +1,363 @@
+<!--
+样式：公共样式、on-background-color：on时候的背景色
+属性：
+onText:on时的文字;
+offText:off时的文字
+checked:选择状态true,false (支持js动态修改)
+readonly:只读true,false (支持js动态修改)
+
+
+方法：
+公共方法
+setAttr("checked");
+getAttr("checked");
+click():模拟点击
+
+
+事件：change：监听switch属性改变，
+-->
+<page>
+    <module>
+        <![CDATA[
+    
+    ]]>
+    </module>
+    <script>
+        <![CDATA[
+            var document = require("Document");
+            var window = require("Window");
+            var time = require("Time");
+            var console = require("Console");
+            var device = require("Device");
+
+            var Switch = function() {
+                this.btn = null;
+
+                this.roundimage = null;
+                this.box = null;
+                this.ontext = null;
+                this.offtext = null;
+                this.readonlydom = null;
+
+                this.readonly = "false";
+                this.checked = "false";
+                this.value = "";
+                this.onText = "是";
+                this.offText = "否";
+
+                this.btnSize = 0;
+                this.btnMaxX = 0;
+                this.space_w = 0;
+                this.isOn = false;
+                this.backgroundColor = "#549FF7";
+                this.height = 36;
+                this.timestamp = 0;
+                this.clicktag = false;
+                this.movetag = false;
+
+                this.btnFrame = null;
+                // taginit = true;
+            };
+
+            module.exports = Switch;
+            Switch.prototype = {
+                created: function() {
+                    this.box = this.getElement("box");
+                    this.roundimage = this.getElement("roundimage");
+                    this.btn = this.getElement("roundbtn");
+                    this.ontextdom = this.getElement("ontext");
+                    this.offtextdom = this.getElement("offtext");
+                    this.readonlydom = this.getElement("readonly");
+                    this.init();
+                    var copythis = this;
+
+
+                    this.btn.on("touchMove", function(e, param) {
+                        if (Math.abs(param.distanceX) >= 1) {
+                            //标记已经移动
+                            copythis.movetag = true;
+                        }
+
+                        // var json = this.getFrame();
+                        copythis.btnFrame.x += param.distanceX;
+
+
+                        if (copythis.btnFrame.x < 0) {
+                            copythis.btnFrame.x = 0;
+                        } else if (copythis.btnFrame.x > copythis.space_w) {
+                            copythis.btnFrame.x = copythis.space_w;
+                        }
+                        // console.log(json.x+"copythis.space_w"+copythis.space_w);
+                        console.log(copythis.btnFrame);
+                        this.setFrame(copythis.btnFrame);
+                        if (copythis.btnFrame.x > copythis.space_w / 2) {
+                            copythis.box.setStyle("background-color", copythis.backgroundColor);
+                            copythis.btn.setStyle("border-color", copythis.backgroundColor);
+                        } else {
+                            //copythis.setOff();
+                            copythis.box.setStyle("background-color", "#e5e7ea");
+                            copythis.btn.setStyle("border-color", "#e5e7ea");
+                        }
+
+                    });
+                    this.btn.on("touchUp", function(e) {
+                        if (copythis.movetag == true) {
+                            //如果再移动的过程中抬起手指，根据移动的距离判断是true还是false
+                            //var json = this.getFrame();
+                            if (copythis.btnFrame.x > copythis.space_w / 2) {
+                                copythis.setAttr("checked", "true");
+                            } else {
+                                copythis.setAttr("checked", "false");
+                            }
+                        }
+
+                        if (copythis.movetag == false) {
+                            if (copythis.isOn)
+                                copythis.setAttr("checked", "false");
+                            else
+                                copythis.setAttr("checked", "true");
+                        }
+
+                    });
+                    this.btn.on("touchDown", function(e) {
+                        //标记没有移动
+                        copythis.btnFrame = copythis.btn.getFrame();
+
+                        copythis.movetag = false;
+
+                    });
+
+                    this.box.on("touchCancel", function(e) {
+                        //console.log("touchCancel");
+                    });
+                },
+                click: function() {
+                    this.btn.fire("touchDown");
+                    this.btn.fire("touchUp");
+                    this.fire("click");
+                },
+                //属性变更回调函数 
+                attrChanged: function(attrName, attrValue, taginit) {
+
+                    var changetag = false;
+                    if (taginit == false) {
+
+                        if (this.getAttr(attrName) != this[attrName] && this[attrName] != null) {
+                            //this.fire("change");
+                            changetag = true;
+                        }
+
+                    }
+
+                    if (attrName == "onText") {
+                        if (attrValue != null) {
+                            this.onText = attrValue;
+                        }
+                        this.ontextdom.setText(this.onText);
+                    }
+
+                    if (attrName == "offText") {
+                        if (attrValue != null) {
+                            this.offText = attrValue;
+                        }
+                        this.offtextdom.setText(this.offText);
+                    }
+
+                    if (attrName == "checked") {
+
+                        if (attrValue != null) {
+                            this.checked = attrValue;
+                        }
+
+
+                        if (taginit == true) {
+                            //这里是初始化的时候进来,直接把状态修改好
+                            if (this.checked == "true") {
+                                this.setOn();
+                            } else {
+
+                                this.setOff();
+                            }
+
+                        } else {
+                            //通过js修改属性加上动画效果
+                            var jsonData = {};
+                            var aniAry = new Array();
+                            //第一个动画
+                            var jsonAni1 = {};
+                            jsonAni1.delay = 0;
+                            jsonAni1.duration = 200;
+                            jsonAni1.curve = "linear";
+                            jsonAni1.props = {};
+                            if (this.checked == "true")
+                                jsonAni1.props.x = this.btnMaxX;
+                            else
+                                jsonAni1.props.x = 0
+
+                            aniAry.push(jsonAni1);
+                            jsonData.animators = aniAry;
+                            var copythis = this;
+                            this.btn.startAnimator(jsonData, function() {
+                                console.log("copythis.isOn:" + copythis.isOn + "##attrValue:" + copythis.checked);
+                                if (copythis.isOn + "" != copythis.checked) {
+
+                                    if (copythis.checked == "true")
+                                        copythis.setOn();
+                                    else
+                                        copythis.setOff();
+
+
+                                }
+                            });
+                        }
+                    }
+
+                    if (attrName == "readonly") {
+
+                        var ctrlbox = this.getElement("ctrlbox");
+                        if (attrValue == "true") {
+                            this.readonly = attrValue;
+
+                            ctrlbox.appendChild(this.readonlydom);
+                        } else {
+
+                            ctrlbox.appendChild(this.box);
+                        }
+
+                        if (taginit == false) {
+
+                            ctrlbox.refresh();
+                        }
+
+                    }
+
+                    if (attrName == "value") {
+
+                        if (attrValue != null) {
+                            this.value = attrValue;
+                        }
+                    }
+
+                    if (changetag == true) {
+                        this.fire("change");
+                    }
+
+
+                },
+                //样式变更回调函数
+                styleChanged: function(styleName, styleValue, taginit) {
+
+                    if (styleName == "on-background-color") {
+                        //  console.log("4444444444444444444444444444444444444444");
+                        if (styleValue != null) {
+                            this.backgroundColor = styleValue;
+                        }
+
+                        if (this.checked == "true") {
+                            this.btn.setStyle("border-color", this.backgroundColor);
+                            this.box.setStyle("background-color", this.backgroundColor);
+                        }
+
+
+                    }
+
+                    if (styleName == "font-size") {
+                        if (styleValue != null) {
+
+                            this.ontextdom.setStyle("font-size", styleValue);
+                            this.offtextdom.setStyle("font-size", styleValue);
+                        }
+
+
+                    }
+
+                },
+                init: function() {
+                    // taginit = true;
+
+                    var cssHeight = this.getStyle("height");
+                    if (cssHeight) {
+                        cssHeight = parseInt(cssHeight);
+                        this.btnSize = cssHeight;
+                        this.box.setStyle("border-radius", this.btnSize / 2);
+                        this.btn.setStyle("border-radius", this.btnSize / 2);
+                        this.box.setStyle("height", cssHeight);
+                        this.readonlydom.setStyle("height", cssHeight);
+                        this.readonlydom.setStyle("border-radius", this.btnSize / 2);
+                    } else {
+                        cssHeight = 36;
+                        this.btnSize = cssHeight;
+                        this.box.setStyle("border-radius", this.btnSize / 2);
+                        this.btn.setStyle("border-radius", this.btnSize / 2);
+                        this.readonlydom.setStyle("border-radius", this.btnSize / 2);
+                    }
+
+                    this.btn.setStyle("width", this.btnSize);
+                    this.btn.setStyle("height", this.btnSize);
+                    this.roundimage.setStyle("width", this.btnSize);
+                    this.roundimage.setStyle("height", this.btnSize);
+                    var cssWidth = this.getStyle("width");
+                    if (cssWidth) {
+                        cssWidth = parseInt(cssWidth);
+                        this.btnMaxX = cssWidth - this.btnSize;
+                        this.box.setStyle("width", cssWidth);
+                        this.readonlydom.setStyle("width", cssWidth);
+                    } else {
+                        cssWidth = 72;
+                        this.btnMaxX = cssWidth - this.btnSize;
+                    }
+                    this.space_w = cssWidth - this.btnSize;
+
+                    /*this.setAttr("readonly", this.getAttr("readonly"));
+                    this.setAttr("value", this.getAttr("value"));
+
+                    this.setAttr("onText", this.getAttr("onText"));
+                    this.setAttr("offText", this.getAttr("offText"));
+                    this.setStyle("on-background-color", this.getStyle("on-background-color"));
+                    var copythis = this
+                    copythis.setAttr("checked", copythis.getAttr("checked"));*/
+
+
+
+                    // taginit = false;
+                },
+                setOn: function() {
+                    // console.log("222222222222222222222222222222222222222");
+                    this.isOn = true;
+                    this.btn.setStyle("left", this.btnMaxX);
+                    this.btn.setStyle("border-color", this.backgroundColor);
+                    this.box.setStyle("background-color", this.backgroundColor);
+                    //console.log("backgroundColor"+this.btn.getStyle("border-color"));
+                    //document.refresh();
+
+                },
+                setOff: function() {
+                    this.isOn = false;
+                    this.btn.setStyle("left", 0);
+                    // console.log("333333333333333333333333333333333333");
+                    this.box.setStyle("background-color", "#e5e7ea");
+                    this.btn.setStyle("border-color", "#e5e7ea");
+
+                }
+            }
+        ]]>
+    </script>
+    <style>
+        @import url("switch.layout.css");
+        @import url("switch.color.css");
+    </style>
+    <ui>
+        <box class="ctrlbox" id="ctrlbox">
+            <box id="readonly" class="readonly" />
+            <box id="box" class="box">
+                <text id="ontext" class="ontext"></text>
+                <text id="offtext" class="offtext"></text>
+                <box id="roundbtn" class="btn">
+                    <image id="roundimage" class="btn" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAAA2CAYAAACMRWrdAAAAGG5wT2wIAAAACAAAAAgAAAAIAAAAaZGIQf8AAADzvzqNAAAAEG5wTGIHAAAABwAAAAcAAAAHAAAAXjlvOAAAAGRucFRjAAQECSAAAAAwAAAAAAAABwAAAAcAAAAHAAAAB0AAAAAAAAAAAAAAAgAAADQAAAA2AAAAAAAAAAIAAAA0AAAANgAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAABAAAAAE6p/fUAAAlFSURBVGje7ZpfaBtHHse/s7O72ZUUOWrjpK5TV/nT5OIkpmVTEvepUGKwQWnhLhxt7558gXstlDvylIYWiq/QvpRwveC3knLgS48EatBdQwMtebiIEIWoV6O0iZX2cB11XdnSzv6ZnXvIbNiodiz7/EdwHfihlVaj+X3292dmfiPg5/ZzW6gRKWs22Gr/7kJjiAWu2w4sbpH715ZlEcbYA+MYhiEKhYKIQc13ve5gJA6yb98+2tvbSw3DUEqlkigUCrzJKhEw7e3tJYyxsFQq8Rs3bvAmOLFeYEocbHBwkHLO1Xw+HwDwpGJ0x44dKcuy9Gw2SwHg1q1bvFAoeF9//fUcAC776wMDAyqlNBgfH+dNYOFagcXdTXn++edVXddpPp9nAPjLL7+8+cSJE89u3bq13zTNX6iqup0Q0kkISQCAEKIhhJgOguAbx3H+PTU1dfntt9/+10cffXQXAB0YGDA8z+OfffZZIKHEasVhM5QCgALQcrlcwrIsDQDJ5/NPV6vVdx3Huel5nvB9/754nveANN9zHOdmtVp9N5/PPw2AWJal5XK5BABNjqWsZkaNoNRsNmsMDAwkAWBsbOwp27bPeJ7XkIqGUnwpXEr0efQ+uh96nhfKvg3bts+MjY09BQADAwPJbDZrAFBXC+4+1LZt28xjx46ZAOjt27ePM8amY0CBVFosUbjsG/q+Lxhj07du3fodAHrs2DFz27Zt5lLhlCVkPcWyLN0wjLCzs5NWq9UPHn/88b9QSh8VQkQZjbb4m/PpQWUMckrpo93d3Weq1eoHnZ2d1DCM0LIsPQZGViym5FPbcPr06UytVvskCAIRczWxwsI9z/ODIBC1Wu2T06dPZwBskDq0FHOklflp165dKmNM2bVrFz1//vxfTdMcEkIEcpDVCmoBgBNCVMdxPjl69Oivy+UyNwwjLJfLwWLzHWkhpat9fX1asVh0ZmZm/pxMJo9LKHWNln0BIUSt1+tnNm3a9Pu+vj6zWCz6AIKHTQXKYm6Yy+XUYrFYr1Qqw4lE4riMp7WCAgBVCMETicTxSqUyXCwW67lcbllZMnJBGqXa8fHxPYyx72T2W42YWjTmZLb8bnx8fE805cRCgbRqMQJA2b17NwUQ9Pf3v04p7ZLWUrD2TZHZsqu/v/91AIHUbUGrLQg2ODio5PN5dvHiRcs0zVeFEFgnqDgcTNN89eLFi1Y+n2eDg4NLAiMAiKqqFADfv3//bxVFMWWwknUEIwACRVHM/fv3/wYAlzq25IrR1kO5cOECHxoaeiyVSuWWMJmvutUAIJVKHR0aGnrswoULfN++fcp8GX5eZTs7OxUA/smTJw+qqrqjDdzwAXdUVXXHyZMnDwLwpa4tuaLyxBNPUABhV1fXc4QQSDdslxYQQtDV1fUcgFDqqrSUPEqlkgBgJJPJPatcG1n2HlLqZkhdF7UYsSyLFAoFkUql0qqqbm9XMFVVt6dSqXShUBCWZZFFY0wWXsjhw4cNVVU3tzHY5sOHDxsAflIsagZ74GYqldKi7XxbFikJSaRSKW2hte9PLOa6LgGgeJ5H270CK3VUpM4LWiwehIpt22EYhk67QoVh6Ni2HS7EsODcdPXqVd/3/apM96KNmAQhBL7vV69eveq3WhoQ5XJZ9PT0UMaY02g0KoQQCDlDtwWVEIIQgkajUWGMOT09PbRcLv9kwzmfxUR3dzcB4Ni2fbNdXVHq5khdW9poiqmpKQ5Au3btWoFzDkJI2yQSQgjlnOPatWsFAJrUtbUd9OzsLAegnTp1qug4TkVRlHaJM6EoClzXnTx16lQRgCZ1XTzGAITT09M8m82SiYmJ7+/cufMPGWdhG8RXSAjB5OTkPycmJr7PZrNkenqaN5XCH5oVQ9/3fQDK2bNnz/u+zxRFoetsNaEoCvV9n509e/Y8AEXqGLZapSKyWGNmMplNtm2rExMTIzt37vxVEAR8veJNCMFVVaU3b94c27179x8zmUxg2/YMAKepYrVw8pBPIfA8zwOAkZGRUcdx7lJK18tqglJKHce5OzIyMipXHZ4ECpdSfhMAeL1e97Zs2UJGR0fLly5den+hGt5agAHApUuX3h8dHS1v2bKF1Ot1D/fO15ZUMIV0RwPAxlQqlZmbm1O+/PLLN/bs2fNL3/cDQoi6Ri4YaJqmfvXVV3/bu3fvG6lUKpybm7MBzAJgC22CH7bdD2UnNwiChq7r5NChQ+9UKpXPNU1TYwcRqxpXmqaplUrl80OHDr2j6zoJgqABwI25IZYNxhhzCCFurVZzjhw5cmJycvILXdepEIKvxnJL3Gtc13U6OTn5xZEjR07UajWHEOIyxpxWwBbbQCpxl9R1vUMIoWcyGfPTTz/9Q29v70thGIowDENCyEoczAkhRKjca6RUKv39hRde+JNt2w4hxPM878cmF1yWxSKrcdw7LG94njdLCPFd1/UOHDjw5rlz595yXfdHTdPun21heYfhYeTamqZR13V/PHfu3FsHDhx403VdjxDie543C6AhdVnuOPPOawkAjwJ4Utf13nQ6/SyAvlwu9+L169c/ZoyxMAyjc+XQdd1ASvyYNpT3eHQ/OsUMw1Awxtj169c/zuVyLwLoS6fTz+q63gvgSTl2QuqyYqWKCC4JYDOAHgB7Ozo6DmqaZgF4Znh4+JUrV658ODMzcydSNAxDEQSBCILg/mF69D667/u+mJmZuXPlypUPh4eHXwHwjKZpVkdHx0EAe+VYm+XYLUORZcBpMuaSskSXoJQatVotABB0d3dvfu2113r7+/v7tm7dun3jxo1dhmFkKKUGAHDOGWPMnp2d/c/U1NQ3ly9fLr733nulb7/99i4ANZ1Oq5xzVq/XGzKW6vLVn2+FsRJg0fdpDO6+JJPJDZRSvVarIaaEYRiG+cgjj+jpdJoCQK1W4z/88IMnsxuLHlY6nQbn3KvX6678PC7+wybjlQCL+kTZUpdgG+S1ruu6bpqmpqoqbTQaxHGceZUxTZMkEgkRBAF3HMeXS6RIIriHLptWGizqF7eeFoHJa1UK1XVdAUCEEERuFAUA4XlelHEDKX4MzG+ykliOgv9rUon+yqDOI/HDORJb94nYVBLMI3w5VlpJsPh8GLcijQGT2ANATGERA+BN1lmROWqly8/N0nx+JeYBXJG/8v1ftP8CBygnYtNXvmUAAAAASUVORK5CYII=" style="round:true" />
+                </box>
+            </box>
+
+        </box>
+    </ui>
+
+</page>

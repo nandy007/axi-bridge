@@ -1,0 +1,26 @@
+{
+  "jsPaths": {
+    "mainjs": "res:myapp/js/main.js",
+    "JQLite": "res:common/util/agile.ce.native.js",
+    "listjs": "res:myapp/js/list.js",
+    "list_newsjs": "res:myapp/js/list_news.js",
+    "detailjs": "res:myapp/js/detail.js"
+  },
+  "componentPaths": {
+    "buttonUI": "${component:button}",
+    "switchUI": "${component:switch}",
+    "newsliderUI": "${component:newslider}",
+    "titlebarUI": "${component:titlebar}",
+    "tabbarUI": "${component:tabbar}",
+    "menubarUI": "${component:menubar}",
+    "gridmenuUI": "${component:gridmenu}",
+    "list_news": "res:myapp/template/list_news.bcp"
+  },
+  "cssPaths": {
+    "logincss": "res:myapp/css/login.css",
+    "maincss": "res:myapp/css/main.css",
+    "listcss": "res:myapp/css/list.css",
+    "list_newscss": "res:myapp/css/list_news.css",
+    "detailcss": "res:myapp/css/detail.css"
+  }
+}

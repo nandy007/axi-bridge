@@ -1,0 +1,101 @@
+<page>
+    <module>
+        <![CDATA[
+    
+        ]]>
+    </module>
+    <script>
+        <![CDATA[
+        var console = require('Console');
+
+        var Component = require('../util.js').Component;
+
+        var fonts = require('./fonts.js');
+
+        function MyView(){
+            
+        }
+
+        MyView.prototype = {
+            initProto: function(){
+                var $ = this.$, jsDom = this.jsDom, $jsDom = $(jsDom), comp = this, iconDom = jsDom.getRootElement(), $iconDom = $(iconDom);
+                var curFont;
+                var props = this.props = {
+                    'size': {
+                        // memo: 'icon的大小，单位px（2.4.0起支持rpx）',
+                        type: Number,
+                        value: 23,
+                        handler: function(val){
+                            $iconDom.css({
+                                'font-size': val
+                            });
+                        },
+                        init: function(){
+                            if($jsDom.hasAttr('size')){
+                                this.handler(comp.getAttrValue('size'));
+                            }
+                        }
+                    },
+                    'color': {
+                        // memo: 'icon的颜色，同css的color',
+                        type: String,
+                        handler: function(val){
+                            if(val) props.type.setCss(val);
+                        }
+                    },
+                    'type': {
+                        // memo: 'icon的类型，有效值：success, success_no_circle, info, warn, waiting, cancel, download, search, clear',
+                        type: String,
+                        setCss: function(color){
+                            if(curFont && curFont.setCss){
+                                curFont.setCss($iconDom, comp.getAttrValue('color'));
+                            }else{
+                                $iconDom.css({
+                                    color: color || (curFont && curFont.color),
+                                    'background-color': 'transparent'
+                                });
+                            }
+                        },
+                        handler: function(val){
+                            curFont = fonts[val];
+                            if(!curFont){
+                                $iconDom.text('');
+                                return;
+                            }
+                            $iconDom.text(curFont.content);
+                            this.setCss(comp.getAttrValue('color'));
+                        }
+                    },
+                    'content': {
+                        // memo: '字体内容，非标',
+                        type: String,
+                        handler: function(val){
+                            $iconDom.text(val);
+                        },
+                        init: function(){
+                            if(jsDom.hasAttr('content')){
+                                this.handler(comp.getAttrValue('content'));
+                            }
+                        }
+                    }
+                };
+
+            }
+        };
+
+        
+        module.exports = Component(MyView);
+
+    ]]>
+    </script>
+    <style>
+        axi-icon{
+            font-family:Material Design Icons;
+            text-align:center;
+            font-size: 23;
+        }
+    </style>
+    <ui>
+        <iconfont></iconfont>
+    </ui>
+</page>

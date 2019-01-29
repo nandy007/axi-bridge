@@ -1,0 +1,184 @@
+<page>
+    <module>
+        <![CDATA[
+    
+        ]]>
+    </module>
+    <script>
+        <![CDATA[
+        var console = require('Console');
+        var time = require('Time');
+
+        var Component = require('../util.js').Component;
+
+        function MyView(){
+
+        }
+
+        MyView.prototype = {
+            created: function(){
+                this.initHover();
+            },
+
+            initProto: function(){
+                var jsDom = this.jsDom, comp = this;
+
+                this.props = {
+                    'hover-class': {
+                        // memo: '指定按下去的样式类。当 hover-class="none" 时，没有点击态效果',
+                        type: String,
+                        handler: function(val){
+                            comp.hoverClass = val || '';
+                        }
+                    },
+                    'hover-stop-propagation': {
+                        // memo: '指定是否阻止本节点的祖先节点出现点击态',
+                        type: Boolean,
+                        value: false,
+                        handler: function(val){
+                            comp.hoverStopPropagation = val;
+                        }
+                    },
+                    'hover-start-time': {
+                        // memo: '按住后多久出现点击态，单位毫秒',
+                        type: Number,
+                        value: 50,
+                        handler: function(val){
+                            comp.hoverStartTime = val;
+                        }
+                    },
+                    'hover-stay-time': {
+                        // memo: '手指松开后点击态保留时间，单位毫秒',
+                        type: Number,
+                        value: 400,
+                        handler: function(val){
+                            comp.hoverStayTime = val;
+                        }
+                    }
+                };
+
+                this.hoverValidTime = 700; // 出现点击态起多久以内算有效，单位毫秒
+            },
+
+            bubbleEvent: function(e){
+                if(this.hoverStopPropagation) return;
+                var pDom = this.jsDom.getParent();
+                pDom && pDom.fire(e.type, [e]);
+            },
+
+            initHover: function(){
+                if(!this.hoverClass) return;
+                var hoverClass = this.hoverClass, 
+                    hoverStartTime = this.hoverStartTime, 
+                    hoverStayTime = this.hoverStayTime, 
+                    hoverValidTime = this.hoverValidTime, 
+                    jsDom = this.jsDom,
+                    comp = this,
+                    $el = this.$(jsDom);
+                var status = {
+                    isDo: 0,
+                    timestamp: null
+                };
+
+                var auiComTouchUp = function auiComTouchUp(e){
+                    comp.bubbleEvent(e);
+                    if(status.isDo===2) return;
+                    status.isDo = 2;
+                    // var curClass = jsDom.getClassStyle();
+                    var timeGap = e.timestamp - status.timestamp;
+                    var curColor, hoverColor, curOpacity, hoverOpacity;
+                    if(timeGap>=hoverStartTime && timeGap<=hoverStartTime+hoverValidTime){
+                        // curOpacity = $el.css('opacity');
+                        // curColor = $el.css('background-color');
+                        // // jsDom.setClassStyle(hoverClass);
+                        // $el.addClass(hoverClass);
+                        // jsDom.refresh();
+                        // hoverColor = $el.css('background-color');
+                        // hoverOpacity = $el.css('opacity');
+                        // var jsonData = {
+                        //     animators: [
+                        //         {
+                        //             delay: 0,
+                        //             duration: hoverStayTime/2,
+                        //             curve: 'linear',
+                        //             props: {
+                        //                 backgroundColor: hoverColor || 'white',
+                        //                 opacity: hoverOpacity || 1
+                        //             }
+                        //         },
+                        //         {
+                        //             delay: 0,
+                        //             duration: hoverStayTime/2,
+                        //             curve: 'linear',
+                        //             props: {
+                        //                 backgroundColor: curColor || 'white',
+                        //                 opacity: curOpacity || 1
+                        //             }
+                        //         }
+                        //     ]
+                            
+                        // };
+                        // jsDom.startAnimator(jsonData, function(){
+                        //     jsDom.releaseAnimator();
+                        //     // jsDom.setClassStyle(curClass);
+                        //     $el.removeClass(hoverClass);
+                        //     jsDom.refresh();
+                        //     auiComReset(false);
+                        // });
+                        $el.addClass(hoverClass);
+                        time.setTimeout(function(){
+                            $el.removeClass(hoverClass);
+                            auiComReset(false);
+                        }, hoverStayTime);
+                    }else{
+                        auiComReset(false);
+                    }
+                    
+                };
+
+                var auiComReset = function(e){
+                    if(e) comp.bubbleEvent(e);
+                    status.isDo = 0;
+                    status.timestamp = null;
+                    jsDom.off('touchUp', auiComTouchUp);
+                    jsDom.off('touchCancel', auiComReset);
+                };
+
+                if(this.auiComTouchDown){
+                    jsDom.off('touchDown', this.auiComTouchDown);
+                }
+
+                this.auiComTouchDown = function auiComTouchDown(e){
+                    comp.bubbleEvent(e);
+                    if(status.isDo) return;
+                    status.isDo = 1;
+                    status.timestamp = e.timestamp;
+                    jsDom.on('touchUp', auiComTouchUp);
+                    jsDom.on('touchCancel', auiComReset);
+                }
+                
+                jsDom.on('touchDown', this.auiComTouchDown);
+            },
+
+            attrChanged: function(attrName, attrValue){
+                this.initHover();
+            }
+        };
+
+        module.exports = Component(MyView);
+
+    ]]>
+    </script>
+    <style>
+        axi-view{
+            display: flex;
+            /* flex-direction: row; */
+            width: 100%;
+        }
+    </style>
+    <ui>
+        <box>
+            <slot></slot>
+        </box>
+    </ui>
+</page>

@@ -1,0 +1,165 @@
+.flex1 {
+    flex: 1;
+}
+
+.flex2 {
+    flex: 2;
+}
+
+.margin2 {
+    margin: 2;
+}
+
+.margin4 {
+    margin: 4;
+}
+
+.margin6 {
+    margin: 6;
+}
+
+.radius2 {
+    border-radius: 2;
+}
+
+.radius4 {
+    border-radius: 4;
+}
+
+.row-flex-center {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.column-flex-center {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.menubar {
+    justify-content: start;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    align-items: center;
+    height: 50;
+}
+
+.menubarbox {
+    justify-content: start;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    align-items: center;
+    flex:1;
+   
+}
+
+.menubar-item {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 50;
+}
+
+.menubar-item-image {
+    height: 25;
+    width: 25;
+    margin: 0 25 0 25;
+    cacheType: disk;
+}
+
+.menubar-item-text {
+    font-size: 14dp;
+    text-align: center;
+}
+
+.menubar-item-tip {
+    flex-direction: row;
+    align-items: center;
+    height: 20;
+    background-color: red;
+    justify-content: center;
+    border-radius: 10;
+    position: absolute;
+    top: 1;
+    left: 40;
+}
+
+.menubar-item-tip-text {
+    line-space: 0dp;
+    font-size: 12;
+    margin: 0 6.5 0 6.5;
+}
+
+.menubar-item-tip-small {
+    width: 10;
+    height: 10;
+    border-radius: 5;
+    background-color: #ff0000;
+    position: absolute;
+    top: 1;
+    left: 45;
+}
+
+.menubar-item-main {
+    height: 40;
+    width: 40;
+    border-radius: 20;
+    background-color: #549FF7;
+    justify-content: center;
+    align-items: center;
+}
+
+.menubar-item-main-image-out {
+    height: 30;
+    width: 30;
+    margin: 0;
+}
+
+.menubar-out {
+    height: 66;
+    justify-content: flex-end;
+    width: fill_screen;
+}
+
+.menubar-out-z {
+    flex-direction: row;
+    height: 66;
+    width: fill_screen;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.menubar-out-z2 {
+    flex-direction: row;
+    height: 66;
+    width: 66;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.menubar-item-main-out {
+    height: 66;
+    width: 66;
+    border-radius: 33;
+    background-color: #549FF7;
+    justify-content: center;
+    align-items: center;
+    border-color: #dddddd;
+    border-width: 1;
+}
+
+.menubar-item-main-image {
+    height: 26;
+    width: 26;
+     cacheType: disk;
+}

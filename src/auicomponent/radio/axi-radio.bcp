@@ -1,0 +1,119 @@
+<page>
+    <module>
+        <![CDATA[
+    
+        ]]>
+    </module>
+    <script>
+        <![CDATA[
+        require('../icon/axi-icon.bcp');
+
+        var console = require('Console');
+
+        var Component = require('../util.js').Component;
+
+        function MyView(){
+
+        }
+
+        MyView.prototype = {
+            initProto: function(){
+
+                var comp = this, $ = this.$, $jsDom = this.$jsDom, jsDom = this.jsDom,$rootDom = $(this.jsDom.getRootElement());
+
+                var size = 34;
+                
+                var props = this.props = {
+                    'value': {
+                        // memo: '<radio> 标识。当该<radio> 选中时，<radio-group> 的 change 事件会携带<radio>的value',
+                        type: String
+                    },
+                    'disabled': {
+                        // memo: '是否禁用',
+                        type: Boolean,
+                        value: false,
+                        handler: function(val){
+                            $jsDom.css('opacity', val?'0.5':'1');
+                        }
+                    },
+                    'checked': {
+                        // memo: '当前是否选中，可用来设置默认选中',
+                        type: Boolean,
+                        value: false,
+                        handler: function(val){
+                            this.init();
+                            var $group = $jsDom.closest('axi-radio-group');
+                            var groupComp = $group && $group[0].component;
+                            // console.log($group)
+                            if($group && val){
+                                groupComp.setMutex(jsDom);
+                                var $rds = $group.find('axi-radio');
+                                // console.log($rds.length)
+                                $rds.each(function(){
+                                    if(jsDom!==this){
+                                        $(this).attr('checked', false);
+                                    }
+                                });
+                                
+                            }
+                            var need = groupComp ? groupComp.clearMutex(jsDom) : true;
+                            need && $group && $group.trigger('__change__');
+                        },
+                        init: function(){
+                            var checked = comp.getAttrValue('checked');
+                            $rootDom.attr('content', checked?'\uF12C':' '); // \uF5E0 \uF130
+                            props.color.handler(comp.getAttrValue('color'));
+                        }
+                    },
+                    'color': {
+                        // memo: 'radio的颜色，同css的color',
+                        type: String,
+                        value: '#09bb07',
+                        unchecked: '#d1d1d1',
+                        handler: function(val){
+                            var checked = comp.getAttrValue('checked');
+                            $rootDom.css({
+                                'background-color': checked ? val : 'transparent',
+                                'color': checked ? '#ffffff' : 'transparent',
+                            });
+                            $jsDom.css('border-color', checked ? 'none' : this.unchecked);
+                        }
+                    }
+                };
+
+                this.events = {
+                    'click': {
+                        // memo: '点击事件，切换checked状态',
+                        handler: function(){
+                            $jsDom.on('click', function(){
+                                var disabled = comp.getAttrValue('disabled');
+                                if(disabled) return;
+                                var checked = comp.getAttrValue('checked');
+                                if(!checked) $jsDom.attr('checked', true);
+                            });
+                        }
+                    }
+                };
+            },
+            setChecked: function(){
+
+            }
+        };
+
+        
+        module.exports = Component(MyView);
+
+    ]]>
+    </script>
+    <style>
+    axi-radio{
+        width: 34;
+        height: 34;
+        border-width: 1;
+        border-radius: 17;
+    }
+    </style>
+    <ui>
+        <axi-icon></axi-icon>
+    </ui>
+</page>

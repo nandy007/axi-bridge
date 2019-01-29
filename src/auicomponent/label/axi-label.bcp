@@ -1,0 +1,72 @@
+<page>
+    <module>
+        <![CDATA[
+    
+        ]]>
+    </module>
+    <script>
+        <![CDATA[
+
+        var console = require('Console');
+
+        var Component = require('../util.js').Component;
+
+        function MyView(){
+
+        }
+
+        MyView.prototype = {
+            initProto: function(){
+                var comp = this, $jsDom = this.$jsDom, $rootDom = this.$(this.jsDom.getRootElement());
+
+                this.props = {
+                    'for': {
+                        // memo: '绑定控件的 id',
+                        type: String
+                    }
+                };
+
+                this.events = {
+                    
+                    'click': {
+                        // memo: '点击事件处理联动选择',
+                        handler: function(){
+                            $jsDom.on('click', function(){
+                                var _for = comp.getAttrValue('for');
+                                var $el = _for ? $('#'+_for) : $jsDom.find('axi-checkbox,axi-radio,axi-input');
+                                // console.log($el&&$el[0]);
+                                $el && $el.trigger('click');
+                            });
+                        }
+                    }
+                };
+            }
+        };
+
+        
+        module.exports = Component(MyView);
+
+    ]]>
+    </script>
+    <style>
+    axi-label{
+        padding: 6 0 6 0;
+    }
+
+
+    axi-label axi-checkbox{
+        margin-right: 8;
+    }
+    axi-label axi-radio{
+        margin-right: 8;
+    }
+    axi-label axi-input{
+        margin-right: 8;
+    }
+    </style>
+    <ui>
+        <box>
+            <slot></slot>
+        </box>
+    </ui>
+</page>

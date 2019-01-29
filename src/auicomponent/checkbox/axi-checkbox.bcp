@@ -1,0 +1,96 @@
+<page>
+    <module>
+        <![CDATA[
+    
+        ]]>
+    </module>
+    <script>
+        <![CDATA[
+        require('../icon/axi-icon.bcp');
+
+        var console = require('Console');
+
+        var Component = require('../util.js').Component;
+
+        function MyView(){
+
+        }
+
+        MyView.prototype = {
+            initProto: function(){
+
+                var comp = this, $jsDom = this.$jsDom, $rootDom = this.$(this.jsDom.getRootElement());
+                
+                var props = this.props = {
+                    'value': {
+                        // memo: '<checkbox>标识，选中时触发<checkbox-group>的 change 事件，并携带 <checkbox> 的 value',
+                        type: String
+                    },
+                    'disabled': {
+                        // memo: '是否禁用',
+                        type: Boolean,
+                        value: false,
+                        handler: function(val){
+                            $jsDom.css('opacity', val?'0.5':'1');
+                        }
+                    },
+                    'checked': {
+                        // memo: '当前是否选中，可用来设置默认选中',
+                        type: Boolean,
+                        value: false,
+                        handler: function(val){
+                            this.init();
+                            
+                            var $group = $jsDom.closest('axi-checkbox-group');
+                            $group && $group.trigger('__change__');
+                            // console.log($group)
+                        },
+                        init: function(){
+                            var checked = comp.getAttrValue('checked');
+                            $rootDom.attr('content', checked?'\uF12C':' ');
+                        }
+                    },
+                    'color': {
+                        // memo: 'checkbox的颜色，同css的color',
+                        type: String,
+                        value: '#09bb07',
+                        handler: function(val){
+                            $rootDom.css('color', val);
+                        }
+                    }
+                };
+
+                this.events = {
+                    'click': {
+                        // memo: '点击事件，切换checked状态',
+                        handler: function(){
+                            $jsDom.on('click', function(){
+                                var disabled = comp.getAttrValue('disabled');
+                                if(disabled) return;
+                                var checked = comp.getAttrValue('checked');
+                                $jsDom.attr('checked', !checked);
+                            });
+                        }
+                    }
+                };
+            }
+        };
+
+        
+        module.exports = Component(MyView);
+
+    ]]>
+    </script>
+    <style>
+    axi-checkbox{
+        width: 34;
+        height: 34;
+        border-radius: 4;
+        border-width: 1;
+        border-color: #d1d1d1;
+    }
+    </style>
+    <ui>
+        <axi-icon></axi-icon>
+    </ui>
+</page>

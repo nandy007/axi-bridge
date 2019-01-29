@@ -1,0 +1,201 @@
+<page>
+    <module>
+        <![CDATA[
+    
+        ]]>
+    </module>
+    <script>
+        <![CDATA[
+        var console = require('Console');
+        var time = require('Time');
+
+        var Component = require('../util.js').Component;
+
+        function MyView(){
+
+        }
+
+        MyView.prototype = {
+            setWidthAnimate: function(cur, max, range, cb){
+                cur = Math.min(Math.ceil(cur), max);
+                var animateTime = 6, animateTotal = 1000, perRange = range*animateTime/animateTotal;
+                var _this = this;
+                time.setTimeout(function(){
+                    _this.setPercent(cur);
+                    if(cur<max){
+                        _this.setWidthAnimate(cur+perRange, max, range, cb);
+                    }else{
+                        cb();
+                    }
+                }, animateTime);
+            },
+            setPercent: function(val){
+                val += '%';
+                var $progressActive = this.$progressActive, $processPercent = this.$processPercent;
+                $processPercent.text(val);
+                $progressActive.css('width', val);
+                this.jsDom.refresh();
+            },
+            initProto: function(){
+                var jsDom = this.jsDom, comp = this, rootDom = jsDom.getRootElement(), $rootDom = this.$(rootDom);
+                var $progressText = $rootDom.find('#progressText'), $progressArea = $rootDom.find('#progressArea'), $progressActive = $rootDom.find('#progressActive');
+                this.$progressActive = $progressActive;
+                var $processPercent = this.$processPercent = $progressText.find('#processPercent');
+
+                var props = this.props = {
+                    'show-info': {
+                        // memo: '在进度条右侧显示百分比',
+                        type: Boolean,
+                        value: false,
+                        handler: function(val){
+                            $progressText[val?'show':'hide']();
+                        }
+                    },
+                    'border-radius': {
+                        // memo: '圆角大小，单位px（2.4.0起支持rpx）',
+                        type: Number,
+                        value: 0,
+                        handler: function(val){
+                            $progressArea.css('border-radius', val);
+                        }
+                    },
+                    'font-size': {
+                        // memo: '右侧百分比字体大小，单位px（2.4.0起支持rpx）',
+                        type: Number,
+                        value: 16,
+                        handler: function(val){
+                            $processPercent.css('font-size', val);
+                            $progressText.css('width', val*3);
+                        }
+                    },
+                    'stroke-width': {
+                        // memo: '进度条线的宽度，单位px（2.4.0起支持rpx）',
+                        type: Number,
+                        value: 6,
+                        handler: function(val){
+                            $progressArea.css('height', val);
+                        }
+                    },
+                    'activeColor': {
+                        // memo: '已选择的进度条的颜色',
+                        type: String,
+                        value: '#09BB07',
+                        handler: function(val){
+                            $progressActive.css('background-color', val);
+                        }
+                    },
+                    'backgroundColor': {
+                        // memo: '已选择的进度条的颜色',
+                        type: String,
+                        value: '#bebebe',
+                        handler: function(val){
+                            $progressArea.css('background-color', val);
+                        }
+                    },
+                    'active': {
+                        // memo: '进度条从左往右的动画',
+                        type: Boolean,
+                        value: false
+                    },
+                    'active-mode': {
+                        // memo: 'backwards: 动画从头播；forwards：动画从上次结束点接着播',
+                        type: String,
+                        value: 'backwards'
+                    },
+                    'percent': {
+                        // memo: '百分比0~100',
+                        type: Number,
+                        value: 0,
+                        lastValue: 0,
+                        __queue: [],
+                        isActive: false,
+                        queue: function(cur, max, range){
+                            if(arguments.length===0){
+                                if(this.isActive) return;
+                                this.isActive = true;
+                                var cur = this.__queue.shift();
+                                if(!cur){
+                                    this.isActive = false;
+                                    return;
+                                }
+                                var _this = this;
+                                cur.push(function(){
+                                    events.activeend.handler(true);
+                                    _this.isActive = false;
+                                    _this.queue();
+                                });
+                                comp.setWidthAnimate.apply(comp, cur);
+                            }else{
+                                this.__queue.push(Array.prototype.slice.call(arguments));
+                                this.queue();
+                            }
+                        },
+                        handler: function(val){
+                            var active = comp.getAttrValue('active'), activeMode = comp.getAttrValue('active-mode');
+                            var oldVal = this.lastValue;
+                            var range = val - this.lastValue;
+                            if(!active){
+                                this.setPercent(val);
+                            }else{
+                                this.queue(this.lastValue, val, val - this.lastValue);
+                            }
+                            if(activeMode==='forwards') this.lastValue = val;
+                        },
+                        init: function(){
+                            if(jsDom.hasAttr('percent')){
+                                this.handler(comp.getAttrValue('percent'));
+                            }
+                        }
+                    }
+                };
+
+                var events = this.events = {
+                    'activeend': {
+                        memo: '动画完成事件',
+                        handler: function(flag){
+                            if(flag) jsDom.fire('activeend');
+                        }
+                    }
+                };
+            }
+        };
+
+        
+        module.exports = Component(MyView);
+
+    ]]>
+    </script>
+    <style>
+        axi-progress{
+            width: 100%;
+            flex: 1;
+        }
+        #processRoot{
+            flex-direction: row;
+            align-items: center;
+        }
+        #progressArea{
+            width: 100%;
+            flex: 1;
+        }
+        #progressActive{
+            height: 100%;
+            width: 0%;
+        }
+        #processPercent{
+            flex: 0;
+        }
+        #progressText{
+            flex-direction: row;
+            justify-content: center;
+        }
+    </style>
+    <ui>
+        <box id="processRoot">
+            <box id="progressArea">
+                <box id="progressActive"></box>
+            </box>
+            <box id="progressText"><text id="processPercent">1111</text></box>
+        </box>
+    </ui>
+</page>

@@ -1,0 +1,228 @@
+<page>
+    <module>
+        <![CDATA[
+    
+        ]]>
+    </module>
+    <script>
+        <![CDATA[
+        var console = require('Console');
+        var window = require('Window');
+
+        var Component = require('../util.js').Component;
+
+        function MyView(){
+            
+        }
+
+        MyView.prototype = {
+            initProto: function(){
+                var comp = this, $jsDom = this.$jsDom, jsDom = this.jsDom, inputDom = this.jsDom.getRootElement(), $inputDom = this.$(inputDom);
+
+                var props = this.props = {
+                    'value': {
+                        // memo: '输入框的初始内容',
+                        type: String,
+                        value: '',
+                        handler: function(val){
+                            $inputDom.val(val);
+                        }
+                    },
+                    'type': {
+                        // memo: 'input 的类型',
+                        type: String,
+                        value: 'text',
+                        getFromDict: function(val){
+                            // bridge
+                            // default：默认输入法键盘；（默认）
+                            // number：数字输入法键盘；
+                            // decimal：带小数点的浮点数字输入法键盘；
+                            // phone：电话输入法键盘；
+                            // email：电子邮件输入法键盘；
+                            // url：url输入法键盘；
+                            var dict = {
+                                text: 'default', // 文本输入键盘
+                                number: 'number', // 数字输入键盘
+                                idcard: 'default', // 身份证输入键盘
+                                digit: 'decimal' // 带小数点的数字键盘
+                            };
+                            return dict[val] || dict.text;
+                        },
+                        handler: function(val){
+                            $inputDom.attr('keyboardType', this.getFromDict(val));
+                        }
+                    },
+                    'password': {
+                        // memo: '是否是密码类型',
+                        type: Boolean,
+                        value: false,
+                        handler: function(val){
+                            $inputDom.attr('type', val ? 'password' : 'text');
+                        }
+                    },
+                    'placeholder': {
+                        // memo: '输入框为空时占位符',
+                        type: String,
+                        handler: function(val){
+                            $inputDom.attr('prompt', val);
+                        }
+                    },
+                    'placeholder-color': {
+                        // memo: '输入框为空时占位符文字颜色，自定义独有',
+                        type: String,
+                        value: '#aaaaaa',
+                        handler: function(val){
+                            $inputDom.css('prompt-color', val);
+                        },
+                        // init: function(){
+                        //     if(!$jsDom.hasAttr('placeholder-color')) return;
+                        //     this.handler(comp.getAttrValue('placeholder-color'));
+                        // }
+                    },
+                    'disabled': {
+                        // memo: '是否禁用',
+                        type: Boolean,
+                        handler: function(val){
+                            $inputDom.attr('disabled', val);
+                        }
+                    },
+                    'maxlength': {
+                        // memo: '最大输入长度，设置为 -1 的时候不限制最大长度',
+                        type: Number,
+                        value: 140,
+                        handler: function(val){
+                            if(!val && val!==0){
+                                $inputDom.removeAttr('maxLength');
+                            }else{
+                                $inputDom.attr('maxLength', val);
+                            }
+                        }
+                    },
+                    'confirm-type': {
+                        // memo: '设置键盘右下角按钮的文字，仅在type='text'时生效',
+                        type: String,
+                        value: 'done',
+                        // enum: [
+                        // go：前往；
+
+                        // search：搜索；
+
+                        // next：下一项；
+
+                        // send： 发送
+
+                        // done： 完成],
+                        handler: function(val){
+                            var type = comp.getAttrValue('type');
+                            if(type!=='text') return;
+                            $inputDom.attr('returnKeyType', val);
+                        }
+                    },
+                    'focus': {
+                        // memo: '获取焦点',
+                        type: Boolean,
+                        value: false,
+                        handler: function(val){
+                            if(val){
+                                if(!inputDom.isFocus()) inputDom.setFocus();
+                            }else{
+                                if(inputDom.isFocus()) inputDom.setBlur();
+                            }
+                        }
+                    }
+                };
+
+                this.events = {
+                    'input': {
+                        // memo: '键盘输入时触发，event.detail = { value }，处理函数可以直接 return 一个字符串，将替换输入框的内容。',
+                        handler: function(){
+                            jsDom.__afterinput = function(rs){
+                                if(rs===undefined) return;
+                                inputDom.__textChanged = rs;
+                                $inputDom.val(rs);
+                            };
+                            $inputDom.on('textChanged', function(e, value){
+                                if(inputDom.__textChanged===$inputDom.val()){
+                                    delete inputDom.__textChanged;
+                                }else{
+                                    $jsDom.attr('value', $inputDom.val());
+                                    jsDom.fireExtend('input', {
+                                        detail: {
+                                            value: $inputDom.val()
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    },
+                    'focus': {
+                        // memo: '输入框聚焦时触发',
+                        handler: function(){
+                            // $inputDom.on('focus', function(e, value){
+                            //     jsDom.fireExtend('focus', {
+                            //         detail: {
+                            //             value: $inputDom.val()
+                            //         }
+                            //     });
+                            // });
+
+                            jsDom.__beforefocus = function(el, e){
+                                $inputDom.attr('focus', true);
+                                e.detail = {
+                                    value: $inputDom.val()
+                                }
+                                return this.getComponent();;
+                            }
+                        }
+                    },
+                    'blur': {
+                        // memo: '输入框失去焦点时触发，event.detail = {value: value}',
+                        handler: function(){
+                            // $inputDom.on('blur', function(e, value){
+                            //     jsDom.fireExtend('blur', {
+                            //         detail: {
+                            //             value: $inputDom.val()
+                            //         }
+                            //     });
+                            // });
+                            jsDom.__beforeblur = function(el, e){
+                                $inputDom.attr('focus', false);
+                                e.detail = {
+                                    value: $inputDom.val()
+                                }
+                                return this.getComponent();
+                            }
+                        }
+                    },
+                    'confirm': {
+                        // memo: '点击完成按钮时触发，event.detail = {value: value}',
+                        handler: function(){
+                            $inputDom.on('return', function(e, returnKeyType){
+                                if(returnKeyType!=='next') window.hideSip();
+                                jsDom.fireExtend('confirm', {
+                                    detail: {
+                                        value: $inputDom.val()
+                                    }
+                                });
+                            });
+                        }
+                    },
+                };
+            }
+        };
+
+        
+        module.exports = Component(MyView);
+
+    ]]>
+    </script>
+    <style>
+        axi-input{
+            padding: 4 0 4 0;
+            margin: 0;
+        }
+    </style>
+    <ui>
+        <textinput></textinput>
+    </ui>
+</page>

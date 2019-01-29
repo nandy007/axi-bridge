@@ -1,0 +1,221 @@
+<page>
+    <module>
+        <![CDATA[
+    
+        ]]>
+    </module>
+    <script>
+        <![CDATA[
+        var console = require('Console');
+        var window = require('Window');
+        var time = require('Time');
+
+        var Component = require('../util.js').Component;
+
+        function MyView(){
+            
+        }
+
+        MyView.prototype = {
+            initProto: function(){
+                var comp = this, $jsDom = this.$jsDom, jsDom = this.jsDom, inputDom = this.jsDom.getRootElement(), $inputDom = this.$(inputDom);
+
+                var lineHeight;
+
+                var props = this.props = {
+                    'value': {
+                        // memo: '输入框的初始内容',
+                        type: String,
+                        value: '',
+                        initLineHeight: function(){
+                            if(lineHeight) return;
+                            var inputFrame = inputDom.getFrame();
+                            lineHeight = inputFrame.height;
+                        },
+                        handler: function(val){
+                            this.initLineHeight();
+                            $inputDom.val(val);
+                        }
+                    },
+                    'placeholder': {
+                        // memo: '输入框为空时占位符',
+                        type: String,
+                        handler: function(val){
+                            $inputDom.attr('prompt', val);
+                        }
+                    },
+                    'placeholder-color': {
+                        // memo: '输入框为空时占位符文字颜色，自定义独有',
+                        type: String,
+                        value: '#aaaaaa',
+                        handler: function(val){
+                            $inputDom.css('prompt-color', val);
+                        },
+                        // init: function(){
+                        //     if(!$jsDom.hasAttr('placeholder-color')) return;
+                        //     this.handler(comp.getAttrValue('placeholder-color'));
+                        // }
+                    },
+                    'disabled': {
+                        // memo: '是否禁用',
+                        type: Boolean,
+                        handler: function(val){
+                            $inputDom.attr('disabled', val);
+                        }
+                    },
+                    'maxlength': {
+                        // memo: '最大输入长度，设置为 -1 的时候不限制最大长度',
+                        type: Number,
+                        value: 140,
+                        handler: function(val){
+                            if(!val && val!==0){
+                                $inputDom.removeAttr('maxLength');
+                            }else{
+                                $inputDom.attr('maxLength', val);
+                            }
+                        }
+                    },
+                    'auto-height': {
+                        // memo: '是否自动增高，设置auto-height时，style.height不生效',
+                        type: Boolean,
+                        value: false,
+                        getSize: function(val){
+                            val = (val || '').replace(/[^\d]/g, '') || '0';
+                            val = Number(val);
+                            return val;
+                        },
+                        measureTextsize: function(el){
+                            var size = el.getContentSize();
+                            return size;
+                        },
+                        eventRegister: function(){
+                            var size = props['auto-height'].measureTextsize(inputDom);
+                            var height = props['auto-height'].getSize($inputDom.css('height'));
+                            var newHeight =  Math.max(size.height, 30);
+                            if(height===newHeight) return;
+                            time.setTimeout(() => {
+                                $inputDom.trigger('__linechange__', [{height: newHeight}]);
+                                $inputDom.css('height', newHeight);
+                            }, 100);
+                            
+                        },
+                        handler: function(val){
+                            // $inputDom.css('height', 300);
+                            $inputDom.off('textChanged', this.eventRegister);
+                            if(val){
+                                $inputDom.on('textChanged', this.eventRegister);
+                            }
+                        }
+                    },
+                    'focus': {
+                        // memo: '获取焦点',
+                        type: Boolean,
+                        value: false,
+                        handler: function(val){
+                            if(val){
+                                if(!inputDom.isFocus()) inputDom.setFocus();
+                            }else{
+                                if(inputDom.isFocus()) inputDom.setBlur();
+                            }
+                        }
+                    }
+                };
+
+                this.events = {
+                    'input': {
+                        // memo: '当键盘输入时，触发 input 事件，event.detail = {value}，bindinput 处理函数的返回值并不会反映到 textarea 上',
+                        handler: function(){
+                            $inputDom.on('textChanged', function(e, value){
+                                $jsDom.attr('value', $inputDom.val());
+                                jsDom.fireExtend('input', {
+                                    detail: {
+                                        value: $inputDom.val()
+                                    }
+                                });
+                            });
+                        }
+                    },
+                    'focus': {
+                        // memo: '输入框聚焦时触发',
+                        handler: function(){
+                            // $inputDom.on('focus', function(e, value){
+                            //     jsDom.fireExtend('focus', {
+                            //         detail: {
+                            //             value: $inputDom.val()
+                            //         }
+                            //     });
+                            // });
+
+                            jsDom.__beforefocus = function(el, e){
+                                $inputDom.attr('focus', true);
+                                e.detail = {
+                                    value: $inputDom.val()
+                                }
+                                return this.getComponent();
+                            }
+                        }
+                    },
+                    'blur': {
+                        // memo: '输入框失去焦点时触发，event.detail = {value: value}',
+                        handler: function(){
+                            // $inputDom.on('blur', function(e, value){
+                            //     jsDom.fireExtend('blur', {
+                            //         detail: {
+                            //             value: $inputDom.val()
+                            //         }
+                            //     });
+                            // });
+                            jsDom.__beforeblur = function(el, e){
+                                $inputDom.attr('focus', false);
+                                e.detail = {
+                                    value: $inputDom.val()
+                                }
+                                return this.getComponent();
+                            }
+                        }
+                    },
+                    'confirm': {
+                        // memo: '点击完成按钮时触发，event.detail = {value: value}',
+                        handler: function(){
+                            $inputDom.on('return', function(e, returnKeyType){
+                                if(returnKeyType!=='next') window.hideSip();
+                                jsDom.fireExtend('confirm', {
+                                    detail: {
+                                        value: $inputDom.val()
+                                    }
+                                });
+                            });
+                        }
+                    },
+                    'linechange': {
+                        // memo: '输入框行数变化时调用，event.detail = {height: 0}',
+                        handler: function(){
+                            $inputDom.on('__linechange__', function(e, item){
+                                jsDom.fireExtend('linechange', {
+                                    detail: {
+                                        height: item.height
+                                    }
+                                });
+                            });
+                        }
+                    }
+                };
+            }
+        };
+
+        
+        module.exports = Component(MyView);
+
+    ]]>
+    </script>
+    <style>
+        axi-textarea{
+            padding: 4 0 4 0;
+            margin: 0;
+            font-size: 17;
+        }
+    </style>
+    <ui>
+        <textarea rows="1"></textarea>
+    </ui>
+</page>

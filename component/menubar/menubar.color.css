@@ -1,0 +1,16 @@
+.menubar{
+	background-color:#f9f9f9;
+}
+
+.menubar-item-tip-text{
+	color:#ffffff;
+}
+
+.menubar-item-tip-small
+{   
+    background-color: #ff0000;
+}
+
+.menubar-item-main{
+	background-color:#549FF7;
+}

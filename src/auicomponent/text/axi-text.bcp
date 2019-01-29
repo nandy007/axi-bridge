@@ -1,0 +1,101 @@
+<page>
+    <module>
+        <![CDATA[
+    
+        ]]>
+    </module>
+    <script>
+        <![CDATA[
+        var console = require('Console');
+
+        var Component = require('../util.js').Component;
+
+        function MyView(){
+
+        }
+
+        MyView.prototype = {
+            initProto: function(){
+                var jsDom = this.jsDom, comp = this, textDom = jsDom.getRootElement(), $textDom = this.$(textDom);
+
+                var space = '';
+
+                var props = this.props = {
+                    'selectable': {
+                        // memo: '文本是否可选',
+                        type: Boolean,
+                        value: false,
+                        handler: function(val){
+                            $textDom.attr('selectable', val);
+                        }
+                    },
+                    'space': {
+                        // memo: '显示连续空格',
+                        type: String,
+                        value: 'false',
+                        handler: function(val){
+                            // ensp	中文字符空格一半大小
+                            // emsp	中文字符空格大小
+                            // nbsp	根据字体设置的空格大小
+                            if(val==='false' || !val){
+                                space = '';
+                            }else{
+                                space = '&'+val+';';
+                            }
+                        },
+                        replaceSpace: function(val){
+                            val = val || '';
+                            if(!space) return val;
+                            val = val.replace(/ /g, space);
+                            return val;
+                        }
+                    },
+                    'text': {
+                        // memo: '显示的文本，非标',
+                        type: String,
+                        handler: function(val){
+                            textDom.setText(val||'');
+                        },
+                        init: function(){
+                            if(jsDom.hasAttr('text')){
+                                this.handler(comp.getAttrValue('text'));
+                            }
+                        }
+                    },
+                    'html': {
+                        // memo: '显示的富文本，非标',
+                        type: String,
+                        handler: function(val){
+                            textDom.setHtml(props.space.replaceSpace(val));
+                        },
+                        init: function(){
+                            if(jsDom.hasAttr('html')){
+                                this.handler(comp.getAttrValue('html'));
+                            }
+                        }
+                    }
+                };
+
+
+                // hack 不同外层dom不具备text的setHtml方法
+                jsDom.setHtml = function(val){
+                    textDom.setHtml(props.space.replaceSpace(val));
+                };
+                // jsDom.setText = function(val){
+                //     textDom.setText(props.space.replaceSpace(val));
+                // };
+            }
+        };
+
+        
+        module.exports = Component(MyView);
+
+    ]]>
+    </script>
+    <style>
+
+    </style>
+    <ui>
+        <text></text>
+    </ui>
+</page>

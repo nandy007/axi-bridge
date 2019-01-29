@@ -1,0 +1,10 @@
+{
+  "homeJs": "res:home.js",
+  "orientation": "portrait",
+  "require": "res:require.json",
+  "appname": "项目模板",
+  "appversion": "1.0.1",
+  "appid": "template",
+  "icon": "",
+  "platform": ""
+}

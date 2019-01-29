@@ -1,0 +1,441 @@
+<!--
+样式：
+box公共样式:
+title-color:标题颜色(通过js可以修改)；
+left-color:左边为文字颜色(通过js可以修改)；
+right-color:右边文字颜色(通过js可以修改)；
+licon-width:左边图片宽度(通过js可以修改)；
+licon-height:左边图片高度(通过js可以修改)；
+ricon-width:右边图片宽度(通过js可以修改)；
+ricon-height:右边图片高度(通过js可以修改)；
+riconsnd-width:右边第二图片宽度(通过js可以修改)；
+riconsnd-height:右边第二图片高度(通过js可以修改)；
+
+属性：
+title：标题 (通过js可以修改)；
+licon：左边图片地址(通过js可以修改)；
+ltext: 左边文字(通过js可以修改)；
+rtext: 右边文字(通过js可以修改)；
+ricon：右边图片地址(通过js可以修改)；
+riconsnd：右边第二张图片地址(通过js可以修改)；
+
+方法：
+公共方法；
+setTitleContent('自定义内容')：根据xml字符串自定义内容；
+getDomById("id"):根据id得到自定内容中控件的dom;
+
+
+事件：
+公共事件；
+ltextClick：监听左侧文字点击事件；
+rtextClick:监听右侧文字点击事件；
+liconClick:监听左侧图片点击事件；
+riconClick:监听右侧图片点击事件；
+riconsndClick:监听右侧第二张图片点击事件；
+-->
+<page>
+    <module>
+
+        <![CDATA[
+    
+    ]]>
+
+    </module>
+    <script>
+        <![CDATA[
+            var document = require("Document");
+            var window = require("Window");
+            var time = require("Time");
+            var console = require("Console");
+
+            //定义一个Titebar类
+            var Titlebar = function() {
+                this.titlebarbox = null;
+                this.titletext = null;
+                this.ltextObj = null;
+                this.ltextboxObj = null;
+                this.rtextObj = null;
+                this.rtextboxObj = null;
+                this.liconObj = null;
+                this.liconboxObj = null;
+                this.riconObj = null;
+                this.riconboxObj = null;
+                this.riconsndObj = null;
+                this.riconsndboxObj = null;
+                this.titlebarLcaption = null;
+                this.titlebarRcaption = null;
+
+                this.titleColor = "#000000";
+                this.leftColor = "#549FF7";
+                this.rightColor = "#549FF7";
+                this.titleFontSize = "18";
+                this.liconWidth = "30";
+                this.liconHeight = "30";
+                this.riconWidth = "30";
+                this.riconHeight = "30";
+                this.riconsndWidth = "30";
+                this.riconsndHeight = "30";
+                this.height = 44;
+
+                this.title = "";
+                this.ltext = "";
+                this.rtext = "";
+                this.licon = "";
+                this.ricon = "";
+                this.riconsnd = "";
+
+                //  taginit = true;
+
+                this.pathLocation = "";
+
+            }
+
+            Titlebar.prototype = {
+
+                created: function() {
+                    //这里是得到组件所在的uixml页面的绝对路径目录
+                    this.pathLocation = document.getPathLocation();
+                    this.titlebarbox = this.getElement("titlebarbox");
+                    this.titletext = this.getElement("titletext");
+                    this.ltextObj = this.getElement("ltextObj");
+                    this.ltextboxObj = this.getElement("ltextboxObj");
+                    this.rtextObj = this.getElement("rtextObj");
+                    this.rtextboxObj = this.getElement("rtextboxObj");
+
+                    this.liconObj = this.getElement("liconObj");
+                    this.liconboxObj = this.getElement("liconboxObj");
+
+                    this.riconObj = this.getElement("riconObj");
+                    this.riconboxObj = this.getElement("riconboxObj");
+
+                    this.riconsndObj = this.getElement("riconsndObj");
+                    this.riconsndboxObj = this.getElement("riconsndboxObj");
+
+
+                    this.titlebarLcaption = this.getElement("titlebar-lcaption");
+                    this.titlebarRcaption = this.getElement("titlebar-rcaption");
+
+                    var copythis = this;
+                    this.ltextboxObj.on("click", function(e) {
+                        copythis.fire("ltextClick");
+
+                    });
+                    this.rtextboxObj.on("click", function(e) {
+                        copythis.fire("rtextClick");
+
+                    });
+                    this.liconboxObj.on("click", function(e) {
+                        copythis.fire("liconClick");
+
+                    });
+                    this.riconboxObj.on("click", function(e) {
+                        copythis.fire("riconClick");
+
+                    });
+                    this.riconsndboxObj.on("click", function(e) {
+                        copythis.fire("riconsndClick");
+
+                    });
+
+
+                    this.init();
+
+
+                },
+                //属性变更回调函数
+                attrChanged: function(attrName, attrValue, taginit) {
+                    if (attrName == "title") {
+                        if (attrValue != null) {
+                            this.title = attrValue;
+                        }
+                        this.titletext.setText(this.title);
+
+
+                    }
+                    if (attrName == "ltext") {
+                        if (attrValue != null) {
+                            this.ltextObj.setStyle("display", "block");
+                            this.ltext = attrValue;
+                            this.ltextObj.setText(this.ltext);
+
+                            if (this.getAttr("licon") == null) {
+                                this.ltextObj.setStyle("margin", "0 0 0 10");
+                            }
+                        } else {
+
+                            this.ltextObj.setStyle("display", "none");
+                        }
+
+                        if (taginit == false) {
+
+                            this.titlebarbox.refresh();
+                        }
+
+                    }
+
+                    if (attrName == "rtext") {
+                        if (attrValue != null) {
+                            this.rtextObj.setStyle("display", "block");
+                            this.rtext = attrValue;
+                            this.rtextObj.setText(this.rtext);
+                        } else {
+
+                            this.rtextObj.setStyle("display", "none");
+                        }
+
+                        if (taginit == false) {
+
+                            this.titlebarbox.refresh();
+                        }
+
+                    }
+
+
+                    if (attrName == "licon") {
+                        if (attrValue != null) {
+
+                            if (attrValue.indexOf("res:") > -1 || attrValue.indexOf("http://") > -1 || attrValue.indexOf("https://") > -1) {
+                                this.licon = attrValue;
+                            } else {
+                                this.licon = this.pathLocation + "/" + attrValue;
+                            }
+
+                            this.liconObj.setStyle("display", "block");
+
+                            this.liconObj.setAttr("src", this.licon);
+                        } else {
+
+                            this.liconObj.setStyle("display", "none");
+
+                        }
+
+                        if (taginit == false) {
+
+                            this.titlebarbox.refresh();
+                        }
+
+                    }
+
+                    if (attrName == "ricon") {
+                        if (attrValue != null) {
+                            //通过js进来的图片地址，都认为是基于uixml页面的相对路径，符合开发者思维
+                            if (attrValue.indexOf("res:") > -1 || attrValue.indexOf("http://") > -1 || attrValue.indexOf("https://") > -1) {
+                                this.ricon = attrValue;
+                            } else {
+                                this.ricon = this.pathLocation + "/" + attrValue;
+                            }
+                            this.riconObj.setStyle("display", "block");
+                            this.riconObj.setAttr("src", this.ricon);
+                        } else {
+                            this.riconObj.setStyle("display", "none");
+                        }
+
+                        if (taginit == false) {
+
+                            this.titlebarbox.refresh();
+                        }
+
+                    }
+                    if (attrName == "riconsnd") {
+                        if (attrValue != null) {
+
+                            //通过js进来的图片地址，都认为是基于uixml页面的相对路径，符合开发者思维
+                            if (attrValue.indexOf("res:") > -1 || attrValue.indexOf("http://") > -1 || attrValue.indexOf("https://") > -1) {
+                                this.riconsnd = attrValue;
+                            } else {
+                                this.riconsnd = this.pathLocation + "/" + attrValue;
+                            }
+                            this.riconsndObj.setStyle("display", "block");
+                            this.riconsndObj.setAttr("src", this.riconsnd);
+                        } else {
+                            this.riconsndObj.setStyle("display", "none");
+                        }
+
+                        if (taginit == false) {
+
+                            this.titlebarbox.refresh();
+                        }
+                    }
+
+
+
+                },
+                //样式变更回调函数
+                styleChanged: function(styleName, styleValue, taginit) {
+
+
+
+
+                    if (styleName == "title-color") {
+                        if (styleValue != null) {
+                            this.titleColor = styleValue;
+                        }
+                        this.titletext.setStyle("color", this.titleColor);
+
+                    }
+                    if (styleName == "title-font-size") {
+                        if (styleValue != null) {
+                            this.titleFontSize = styleValue;
+                        }
+                        this.titletext.setStyle("font-size", this.titleFontSize);
+
+                        if (taginit == false) {
+
+                            this.titlebarbox.refresh();
+                        }
+
+                    }
+
+                    if (styleName == "left-color") {
+                        if (styleValue != null) {
+                            this.leftColor = styleValue;
+                        }
+                        this.ltextObj.setStyle("color", this.leftColor);
+
+                    }
+
+                    if (styleName == "right-color") {
+                        if (styleValue != null) {
+                            this.rightColor = styleValue;
+                        }
+                        this.rtextObj.setStyle("color", this.rightColor);
+
+                    }
+
+
+                    if (styleName == "licon-width") {
+                        if (styleValue != null) {
+                            this.liconWidth = styleValue;
+                        }
+                        this.liconObj.setStyle("width", this.liconWidth);
+
+                        if (taginit == false) {
+
+                            this.titlebarbox.refresh();
+                        }
+
+                    }
+                    if (styleName == "licon-height") {
+                        if (styleValue != null) {
+                            this.liconHeight = styleValue;
+                        }
+                        this.liconObj.setStyle("height", this.liconHeight);
+
+                        if (taginit == false) {
+
+                            this.titlebarbox.refresh();
+                        }
+
+                    }
+
+
+                    if (styleName == "ricon-width") {
+                        if (styleValue != null) {
+                            this.riconWidth = styleValue;
+                        }
+                        this.riconObj.setStyle("width", this.riconWidth);
+
+                        if (taginit == false) {
+
+                            this.titlebarbox.refresh();
+                        }
+
+                    }
+                    if (styleName == "ricon-height") {
+                        if (styleValue != null) {
+                            this.riconHeight = styleValue;
+                        }
+                        this.riconObj.setStyle("height", this.riconHeight);
+
+                        if (taginit == false) {
+
+                            this.titlebarbox.refresh();
+                        }
+
+                    }
+
+
+                    if (styleName == "riconsnd-width") {
+                        if (styleValue != null) {
+                            this.riconsndWidth = styleValue;
+                        }
+                        this.riconsndObj.setStyle("width", this.riconsndWidth);
+
+                        if (taginit == false) {
+
+                            this.titlebarbox.refresh();
+                        }
+
+                    }
+                    if (styleName == "riconsnd-height") {
+                        if (styleValue != null) {
+                            this.riconsndHeight = styleValue;
+                        }
+                        this.riconsndObj.setStyle("height", this.riconsndHeight);
+
+                        if (taginit == false) {
+                            this.titlebarbox.refresh();
+                        }
+                    }
+
+
+                },
+                //外部调用js方法
+                init: function() {
+
+                },
+                setTitleContent: function(xmlstr) {
+                    var title_content = this.getElement("title_content");
+
+                    var domobj = document.createElementByXml(xmlstr);
+
+                    title_content.replaceChild(domobj, this.titletext);
+                    title_content.refresh();
+
+                },
+                getDomById: function(id) {
+
+                    return this.getElement(id);
+                }
+            }
+
+
+            module.exports = Titlebar;
+
+        ]]>
+    </script>
+    <style>
+        @import url("titlebar.layout.css");
+        @import url("titlebar.color.css");
+    </style>
+    <ui>
+        <box id="titlebarbox" class="titlebar">
+            <box id="title_content" class="flex1 row-flex-center">
+                <text id="titletext" class="titlebar-text"></text>
+                <box class="titlebar-lcaption" id="titlebar-lcaption">
+                    <box id="liconboxObj" style="" class="column-flex-center">
+                        <image style="display:none;margin:0 0 0 10" id="liconObj" class="titlebar-image" />
+                    </box>
+
+                    <box id="ltextboxObj" style="justify-content: center;">
+                        <text style="display:none;color:#549FF7;" id="ltextObj" class="text-center"></text>
+                    </box>
+
+                </box>
+                <box class="titlebar-rcaption" id="titlebar-rcaption">
+                    <box id="riconsndboxObj" style="" class="column-flex-center">
+                        <image id="riconsndObj" style="display:none;margin:0 15 0 0" class=" titlebar-image" />
+                    </box>
+                    <box id="riconboxObj" style="" class="column-flex-center">
+                        <image style="display:none;margin:0 10 0 0" id="riconObj" class=" titlebar-image" />
+                    </box>
+                    <box id="rtextboxObj" style="" class="column-flex-center">
+                        <text id="rtextObj" style="display:none;height:30;margin:0 10 0 0;color:#549FF7" class="text-center peter-river"></text>
+                    </box>
+                </box>
+            </box>
+
+
+        </box>
+    </ui>
+</page>

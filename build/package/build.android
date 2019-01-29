@@ -1,0 +1,180 @@
+{
+    //Bridge Android打包配置文件
+    //build.android中引用的所有资源文件请放到build_android目录下
+    //例如：配置"config": "logo.png"，BBuilder就会去找build_android/logo.png文件
+    //例如：配置"config": "icons/logo.png"，BBuilder就会去找build_android/icons/logo.png文件
+    "appname": "xui", //【必填项】应用名称，显示在手机桌面快捷方式上
+    "appversion": "1.0.0", //【必填项】应用版本，手机上看到的应用版本
+    "shortcutimg": {
+        //快捷图标，若不配置系统将使用默认值
+        "hdpi": "", //72x72.png，高分屏程序图标
+        "xhdpi": "", //96x96.png，720p高分屏程序图标
+        "xxhdpi": "" //114x114.png，1080p高分屏程序图标
+    },
+    "splashscreen": {
+        //启动图片，若不配置系统将使用默认值
+        "hdpi": "", //480x800.png，高分屏启动图片
+        "xhdpi": "", //720x1280.png，720p高分屏启动图片
+        "xxhdpi": "" //1080x1920.png，1080p高分屏启动图片
+    },
+    "debugmode": false, //调试模式
+    "urlscheme": "xui", //程序注册名
+    "packagename": "com.dingsoft.bridge.s97f10247", //应用包名（格式必须符合安卓包名命名规范），建议自行修改
+    "issupportshortcut": false, //是否自动创建桌面快捷方式
+    "isshowprogramicon": true, //是否显示程序图标，隐藏后手机程序列表里就看不到图标了，一般给第三方软件调用时使用
+    "component": {
+        //组件
+        "BaiduVoice": {
+            //百度语音识别，需要apiKey和secretKey，调用第三方接口时传入。从百度开发者平台申请获取。
+            "enable": false,
+            "appkey": "",
+            "secretkey": ""
+        },
+        "BaiduTts": {
+            //百度语音合成，需要apiKey和secretKey，调用第三方接口时传入。从百度开发者平台申请获取。
+            "enable": false,
+            "appkey": "",
+            "secretkey": ""
+        },
+        "BaiduLocation": {
+            //百度定位,百度地图官方网站申请key，可与百度地图共用，ios与Android不同
+            "enable": false,
+            "appkey": ""
+        },
+        "Baidumap": {
+            //百度地图，官方网站申请key，ios与Android不同 如：Wh38G3ETfwvMjnPfe5pQihfquMrr8BnQ
+            "enable": false,
+            "appkey": ""
+        },
+        "AliPay": {
+            //支付宝
+            "enable": false,
+            "rsaprivate": "", //商户私钥
+            "appid": ""
+        },
+        "Qq": {
+            //QQ分享，需要appId：用于在初始化TencentOAuth对象时传入，在腾讯开放平台申请的唯一标识。
+            "enable": false,
+            "appid": "" //调用初始化方法是传入
+        },
+        "WeiXin": {
+            //微信分享及支付，需要AppID：用于向微信终端程序注册第三方应用。AppSecret：在调用accessToken相关接口方法是传入。在微信开放平台申请。
+            "enable": false,
+            "appid": "", //向微信终端注册第三方应用时传入
+            "appsecret": "" //在调用access_token相关接口时和appKey结合使用
+        },
+        "SangforVpn": {
+            //深信服VPN，调用初始化方法是传入ip和port
+            "enable": false,
+            "ip": "", //深信服服务器ip
+            "port": 0 //深信服服务器port
+        },
+        "WeiBo": {
+            //新浪微博
+            "enable": false,
+            "appkey": "", //注册sdk时传入
+            "redirecturl": "" //实现从新浪微博回调
+        },
+        "Bugly": {
+            //Bugly异常崩溃日志统计工具
+            "enable": false
+        },
+        "BridgePush": {
+            //Bridge推送SDK
+            "enable": false
+        },
+        "Db": {
+            //数据库组件
+            "enable": false
+        },
+        "DbCipher": {
+            //加密数据库组件
+            "enable": false
+        },
+        "XmlDocument": {
+            //XML解析组件
+            "enable": false
+        },
+        "AccessAuth": {
+            //服务器鉴权组件
+            "enable": false
+        },
+        "MapUtil": {
+            //地图相关组件
+            "enable": false
+        },
+        "VideoUtil": {
+            //视频相关组件 支持视频播放，小视频录制等功能。
+            "enable": false
+        },
+        "Phone": {
+            //电话组件
+            "enable": false
+        },
+        "Sms": {
+            //短信组件
+            "enable": false
+        },
+        "Contact": {
+            //通讯录组件
+            "enable": false
+        },
+        "AudioPlay": {
+            //音频播放组件
+            "enable": false
+        },
+        "AudioRecord": {
+            //录音组件
+            "enable": false
+        },
+        "Barcode": {
+            //二维码组件
+            "enable": false
+        },
+        "Jpush": {
+            //极光推送，需要appkey（必选）和channel（可选），调用第三方接口时传入。从极光推送控制台，对应Jpush功能组件
+            "enable": false,
+            "appkey": "",
+            "channel": ""
+        },
+        "RlyIm": {
+            //容联云IM 对应RlyIm功能组件， rlyimchat UI组件,rlyimgroupchat UI组件,rlyimlist UI组件,rlyimnotify UI组件
+            "enable": false,
+            "appId": "",
+            "appToken": ""
+        },
+        "Bi": {
+            //Bi 对应 piechart UI组件,linechart UI组件,barchart UI组件,combinedchart UI组件
+            "enable": false
+        },
+        "Pattern": {
+            //Pattern对应 Pattern功能组件
+            "enable": false
+        },
+        "Share": {
+            //Share对应 Share功能组件 注：一键分享需要勾选支持分享平台SDK，如微博，微信，QQ
+            "enable": false
+        },
+        "mob": {
+            "enable": false,
+            "appkey": "",
+            "appsecret": ""
+        },
+        "JsService": {
+            "enable": false
+        },
+        "touchid": {
+            "enable": false
+        },
+        "SafeTextinput": {
+            "enable": false
+        },
+        "LocalNotification": {
+            "enable": false
+        },
+        "GaodeLocation": {
+            "enable": false,
+            "appkey": ""
+        }
+    }
+}

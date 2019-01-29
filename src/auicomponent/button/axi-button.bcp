@@ -1,0 +1,290 @@
+<page>
+    <module>
+        <![CDATA[
+    
+        ]]>
+    </module>
+    <script>
+        <![CDATA[
+        require('../view/axi-view.bcp');
+        require('../icon/axi-icon.bcp');
+
+        var console = require('Console');
+        // var time = require('Time');
+
+        var Component = require('../util.js').Component;
+
+        function MyView(){
+
+        }
+
+        MyView.prototype = {
+            initProto: function(){
+                var $ = this.$, jsDom = this.jsDom, $jsDom = $(jsDom), comp = this, rootDom = jsDom.getRootElement(), $rootDom = $(rootDom);
+                var $button = $rootDom.children('axi-view');
+                var $buttonMask = $rootDom.children('#buttonMask'), $buttonLoading = $button.children('#buttonLoading'), buttonLoading = $buttonLoading[0];
+
+                function createSettings(r){
+                    return {
+                                value: r,
+                                keyTimes: r/360,
+                                curve: "linear",
+                            };
+                }
+                function loadingAnim(){
+                    var isLoading = comp.getAttrValue('loading');
+                    if(!isLoading) return;
+                    buttonLoading.releaseAnimator();
+                    buttonLoading.startKeyFrameAnimator({
+                        type: rotation,
+                        duration: 1500,
+                        settings: [
+                            createSettings(45),
+                            createSettings(90),
+                            createSettings(135),
+                            createSettings(180),
+                            createSettings(225),
+                            createSettings(270),
+                            createSettings(315),
+                            createSettings(360),
+                        ]
+                    }, function(){
+                        loadingAnim();
+                    });
+                }
+                
+                var props = this.props = {
+                    'size': {
+                        // memo: '按钮的大小default|mini',
+                        type: String,
+                        handler: function(val){
+                            $button[val==='mini'?'addClass':'removeClass'](comp.addPre('mini'));
+                        }
+                    },
+                    'type': {
+                        // memo: '按钮的样式类型primary|default|warn',
+                        type: String,
+                        value: 'default',
+                        enum: ['primary', 'default', 'warn'],
+                        handler: function(val){
+                            comp.addClass($button, val, this.enum);
+                            // console.log(111 + ' ' +$rootDom.attr('class'));
+                        }
+                    },
+                    'plain': {
+                        // memo: '按钮是否镂空，背景色透明',
+                        type: Boolean,
+                        value: false,
+                        handler: function(val){
+                            $button[val?'addClass':'removeClass'](comp.addPre('plain'));
+                        }
+                    },
+                    'disabled': {
+                        // memo: '是否禁用',
+                        type: Boolean,
+                        value: false,
+                        handler: function(val){
+                            $buttonMask[val?'show':'hide']();
+                        },
+                        init: function(){
+                            $buttonMask.on('click', function(){});
+                            if($jsDom.hasAttr('disabled')) this.handler(comp.getAttrValue('disabled'));
+                        }
+                    },
+                    'loading': {
+                        // memo: '名称前是否带 loading 图标',
+                        type: Boolean,
+                        value: false,
+                        handler: function(val){
+                            $buttonLoading[val?'show':'hide']();
+                            // if(buttonLoading.isLoading){
+                            //     loadingAnim();
+                            // }else{
+                            //     buttonLoading.on('loaded', function(){
+                            //         buttonLoading.isLoading = true;
+                            //         loadingAnim();
+                            //     });
+                            // }
+                            // buttonLoading.component.loaded(function(){
+                            //     loadingAnim();
+                            // });
+                        }
+                    },
+                    'hover-class': {
+                        // memo: '指定按下去的样式类。当 hover-class="none" 时，没有点击态效果',
+                        type: String,
+                        handler: function(val){
+                            // 透传view组件属性
+                            $button.attr('hover-class', val);
+                        }
+                    },
+                    'hover-stop-propagation': {
+                        // memo: '指定是否阻止本节点的祖先节点出现点击态',
+                        type: Boolean,
+                        value: false,
+                        handler: function(val){
+                            // 透传view组件属性
+                            $button.attr('hover-stop-propagation', val);
+                        }
+                    },
+                    'hover-start-time': {
+                        // memo: '按住后多久出现点击态，单位毫秒',
+                        type: Number,
+                        value: 50,
+                        handler: function(val){
+                            // 透传view组件属性
+                            $button.attr('hover-start-time', val);
+                        }
+                    },
+                    'hover-stay-time': {
+                        // memo: '手指松开后点击态保留时间，单位毫秒',
+                        type: Number,
+                        value: 400,
+                        handler: function(val){
+                            // 透传view组件属性
+                            $button.attr('hover-stay-time', val);
+                        }
+                    }
+                };
+            }
+        };
+
+        
+        module.exports = Component(MyView);
+
+    ]]>
+    </script>
+    <style>
+        axi-button{
+            opacity: 1;
+        }
+        .private-axi-button{
+            flex-direction: row;
+        }
+        .private-axi-button-view{
+            width: 100%;
+            height: 100%;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            border-radius: 6;
+            padding: 16 16 16 16;
+        }
+
+        
+        .private-axi-button-mini{
+            border-radius: 4;
+            padding: 6 12 6 12;
+        }
+
+        .private-axi-button-view text{
+            font-size: 30;
+        }
+        .private-axi-button-mini text{
+            font-size: 14;
+        }
+
+        .private-axi-button-view axi-icon{
+            font-size: 30;
+        }
+        .private-axi-button-mini axi-icon{
+            font-size: 14;
+        }
+
+
+        .private-axi-button-default{
+            border-width: 1;
+            border-color: #e0e0e0;
+        }
+        .private-axi-button-primary{
+            border-width: 1;
+            border-color: #1aad19;
+            background-color: #1aad19;
+        }
+        .private-axi-button-warn{
+            border-width: 1;
+            border-color: #e64340;
+            background-color: #e64340;
+        }
+        
+        
+        .private-axi-button-default text{
+            color: #2e2e2e;
+        }
+        .private-axi-button-primary text{
+            color: #ffffff;
+        }
+        .private-axi-button-warn text{
+            color: #ffffff;
+        }
+
+        .private-axi-button-default axi-icon{
+            color: #2e2e2e;
+        }
+        .private-axi-button-primary axi-icon{
+            color: #ffffff;
+        }
+        .private-axi-button-warn axi-icon{
+            color: #ffffff;
+        }
+        
+
+        .private-axi-button-plain{
+            background-color: transparent;
+        }
+        .private-axi-button-plain.private-axi-button-default{
+            border-color: #2e2e2e;
+        }
+        .private-axi-button-plain.private-axi-button-primary{
+            border-color: #1aad19;
+        }
+        .private-axi-button-plain.private-axi-button-warn{
+            border-color: #e64340;
+        }
+
+        .private-axi-button-plain.private-axi-button-default text{
+            color: #2e2e2e;
+        }
+        .private-axi-button-plain.private-axi-button-primary text{
+            color: #1aad19;
+        }
+        .private-axi-button-plain.private-axi-button-warn text{
+            color: #e64340;
+        }
+
+        .private-axi-button-plain.private-axi-button-default axi-icon{
+            color: #2e2e2e;
+        }
+        .private-axi-button-plain.private-axi-button-primary axi-icon{
+            color: #1aad19;
+        }
+        .private-axi-button-plain.private-axi-button-warn axi-icon{
+            color: #e64340;
+        }
+
+        #buttonMask{
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            opacity: 0.3;
+        }
+        #buttonLoading{
+            display: none;
+            margin-right: 4;
+        }
+    </style>
+    <ui>
+        <box class="private-axi-button">
+            <axi-view class="private-axi-button-view">
+                <!-- <axi-icon id="buttonLoading" content="\uF453"></axi-icon> -->
+                <image id="buttonLoading" src="./load.gif" style="width: 20;height:20;scaleType:cover;opacity:0.6;"></image>
+                <slot></slot>
+            </axi-view>
+            <box id="buttonMask"></box>
+        </box>
+    </ui>
+</page>

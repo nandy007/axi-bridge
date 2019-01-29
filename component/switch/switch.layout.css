@@ -1,0 +1,103 @@
+.flex1{
+	flex:1;
+}
+.flex2{
+	flex:2;
+}
+
+
+.margin2{
+	margin:2;
+}
+
+.margin4{
+	margin:4;
+}
+
+.margin6{
+	margin:6;
+}
+
+
+.radius2{
+	border-radius:2;
+}
+
+.radius4{
+	border-radius:4;
+}
+
+
+.row-flex-center{
+	flex-direction:row;
+	justify-content:center;	
+	align-items:center;
+}
+
+.column-flex-center{
+	flex-direction:column;
+	justify-content:center;
+	align-items:center;
+}
+
+.ctrlbox{
+	    width:72;
+        height:36;
+		
+}
+.readonly{
+	
+	width:72;
+	height:36;
+	background-color:#ffffff;
+	opacity:0.6;
+	flex-direction:row;
+	align-items:center;
+	padding:0 0 0 0;
+	margin:0;
+	border-radius:18;
+	position:absolute;
+	left:0;
+
+}
+	
+.box
+{
+	width:72;
+	height:36;
+	background-color:#549FF7;
+	justify-content:space-between;
+	flex-wrap:nowrap;
+	flex-direction:row;
+	align-items:center;
+	
+	border-radius:18;
+	position:absolute;
+	left:0;
+	
+}
+.ontext
+{
+	color:#ffffff;
+	font-size: 15;
+	margin:0 0 0 10;
+}
+.offtext
+{
+	color:#808080;
+	font-size: 15;
+	margin:0 10 0 0;
+}
+.btn
+{
+	width:36;
+	height:36;
+	/*border-radius:18;
+	background-color:#ffffff;*/
+	padding:0;
+	margin:0;
+	position:absolute;
+	left:0;
+	/*border-width:2;
+	border-color:#e5e7ea;*/
+}

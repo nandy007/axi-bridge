@@ -1,0 +1,86 @@
+.ctrlbox{
+	background-color:#549FF7;
+	border-color:#549FF7;	
+}
+
+.tip{
+	background-color:rgba(0, 0, 0, 0.15); 
+}
+
+.tip-text{	
+	color:#ffffff;
+}
+
+.tip-outline{
+	background-color:red;
+}
+
+.button-text{
+	color:#ffffff;
+}
+.button-click{
+	background-color:#295b9d;
+	border-color:#295b9d;	
+}
+
+.submit{
+  background-color: #88d038;
+  border-color:#88d038;
+ /* 基于按钮自定义样式*/
+
+  border-color-click:#669d2a;
+  background-color-click:#669d2a;
+}
+
+.submit-click{
+	border-color:#669d2a;
+	background-color:#669d2a;
+}
+.cancel{
+	background-color:#dd524d;
+	border-color:#dd524d;
+	/*自定义样式*/
+	border-color-click:#a63e3a;
+	background-color-click:#a63e3a;	
+}
+.cancel-click{
+	border-color:#a63e3a;
+	background-color:#a63e3a;
+}
+
+.disable{		
+	background-color:#d9d9d9;
+}
+
+
+.outline{
+	
+	border-width:1dp;	
+	background-color:transparent;
+	/*基于按钮自定义样式*/
+	color:#549FF7;
+	color-click:#ffffff;
+	tip-background-color:red;
+
+}
+.outline-text{	
+	color:#549FF7;	
+}
+
+.outline-submit-text{
+	color:#669d2a;	
+}
+.outline-cancel-text{
+	color:#dd524d;	
+}
+
+.outline-disable{
+	border-color:#d9d9d9;
+	border-width:1dp;
+	background-color:transparent;
+    /*自定义样式*/
+	color:#d9d9d9;	
+}
+.outline-disable-text{
+	color:#d9d9d9;
+}

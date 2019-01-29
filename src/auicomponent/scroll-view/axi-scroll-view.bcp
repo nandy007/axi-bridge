@@ -1,0 +1,158 @@
+<page>
+    <module>
+        <![CDATA[
+    
+        ]]>
+    </module>
+    <script>
+        <![CDATA[
+        var console = require('Console');
+
+        var Component = require('../util.js').Component;
+
+        function MyView(){
+
+        }
+
+        MyView.prototype = {
+            created: function(){
+                
+            },
+
+            initProto: function(){
+                var jsDom = this.jsDom, comp = this, scrollDom = jsDom.getRootElement(), $el = this.$(jsDom);
+
+                this.props = {
+                    'direction': {
+                        // memo: 'bridge滚动方向',
+                        type: String,
+                        value: 'horizontal'
+                    },
+                    'scroll-x': {
+                        // memo: 'x滚动方向',
+                        type: Boolean,
+                        value: false,
+                        handler: function(val){
+                            if(val===true){
+                                $el.attr('direction', 'horizontal');
+                            }
+                        }
+                    },
+                    'scroll-y': {
+                        // memo: 'y滚动方向',
+                        type: Boolean,
+                        value: true,
+                        handler: function(val){
+                            if(val===true){
+                                $el.attr('direction', 'vertical');
+                            }
+                        }
+                    },
+                    'upper-threshold': {
+                        // memo: '距顶部多远时，触发 scrolltoupper 事件',
+                        type: Number,
+                        value: 50,
+                        handler: function(val){
+                            comp.upperThreshold = val;
+                        }
+                    },
+                    'lower-threshold': {
+                        // memo: '距底部多远时，触发 scrolltolower 事件',
+                        type: Number,
+                        value: 50,
+                        handler: function(val){
+                            $el.attr('bottomDistance', val);
+                        }
+                    },
+                    'enable-back-to-top': {
+                        // memo: '点击系统状态栏是否滚动至顶部',
+                        refer: 'scrollToTop',
+                        type: Boolean,
+                        value: false,
+                        handler: function(v){
+                            $el.attr('scrollToTop', v);
+                        }
+                    },
+                    'scroll-with-animation': {
+                        // memo: '在设置滚动条位置时使用动画过渡',
+                        type: Boolean,
+                        value: false
+                    },
+                    'scroll-into-view': {
+                        // memo: '值应为某子元素id（id不能以数字开头）。设置哪个方向可滚动，则在哪个方向滚动到该元素',
+                        type: String,
+                        handler: function(val){
+                            if(!val) return;
+                            scrollDom.scrollToCtrlById({
+                                id: 'aaa',
+                                animated: false
+                            });
+                        }
+                    }
+                };
+
+                this.events = {
+                    'scrolltoupper': {
+                        // memo: '会触发 scrolltoupper 事件',
+                        handler: function(){
+                            scrollDom.on('scrollChange', function(e, param){
+                                if(comp.fireScrolltoupper) return;
+                                var direaction = comp.getAttrValue('direction');
+                                // console.log(param.y + ' ' + param.oldY)
+                                if(
+                                    (direaction==='horizontal' && param.x > param.oldX && param.x<=comp.upperThreshold)
+                                    ||
+                                    (param.y < param.oldY && param.y<=comp.upperThreshold)
+                                ){
+                                    comp.fireScrolltoupper = true;
+                                    jsDom.fire('scrolltoupper');
+                                }
+                            });
+                            scrollDom.on('scrollStop', function(e, param){
+                                comp.fireScrolltoupper = false;
+                            });
+                        }
+                    },
+                    'scrolltolower': {
+                        memo: '会触发 scrolltolower 事件',
+                        handler: function(){
+                            scrollDom.on('scrollToBottom', function(){
+                                jsDom.fire('scrolltolower');
+                            });
+                        }
+                    },
+                    'scroll': {
+                        memo: '滚动时触发，event.detail = {scrollLeft, scrollTop, scrollHeight, scrollWidth, deltaX, deltaY}',
+                        handler: function(){
+                            scrollDom.on('scrollChange', function(e, param){
+                                jsDom.fireExtend('scroll', {
+                                    detail: {
+                                        scrollLeft: 0, 
+                                        scrollTop: 0, 
+                                        scrollHeight: $el.height(), 
+                                        scrollWidth: $el.width(), 
+                                        deltaX: param.x, 
+                                        deltaY: param.y
+                                    }
+                                });
+                            });
+                        }
+                    }
+                };
+
+            }
+        };
+        
+        module.exports = Component(MyView);
+
+    ]]>
+    </script>
+    <style>
+
+    </style>
+    <ui>
+        <scroll scrollbar="false">
+            <slot></slot>
+        </scroll>
+    </ui>
+</page>
