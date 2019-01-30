@@ -115,7 +115,7 @@
                         type: String,
                         handler: function(val){
                             // 透传view组件属性
-                            $button.attr('hover-class', val);
+                            $button.attr('hover-class', val || 'private-axi-button-hover');
                         }
                     },
                     'hover-stop-propagation': {
@@ -169,6 +169,10 @@
             align-items: center;
             border-radius: 6;
             padding: 16 16 16 16;
+        }
+
+        .private-axi-button-hover{
+            opacity: 0.9;
         }
 
         
