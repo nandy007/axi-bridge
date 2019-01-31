@@ -201,6 +201,7 @@
                         handler: function(rs){
                             if(arguments.length===0) return; // 不需要初始化
                             var val = dateUtil.formateValue(rs, '-');
+                            if(val===comp.getAttrValue('value')) return;
                             $jsDom.attr('value', val);
                             $jsDom[0].fireExtend('change', {
                                 detail: {

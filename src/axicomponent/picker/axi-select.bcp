@@ -83,6 +83,7 @@
                         memo: 'value 改变时触发 change 事件，event.detail = {value: value}',
                         handler: function(item){
                             if(arguments.length===0) return; // 不需要初始化
+                            if(item.value===comp.getAttrValue('value')) return;
                             $jsDom.attr('value', item.value);
                             $jsDom[0].fireExtend('change', {
                                 detail: {
