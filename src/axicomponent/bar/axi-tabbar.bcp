@@ -1,0 +1,151 @@
+<page>
+    <module>
+        <![CDATA[
+    
+        ]]>
+    </module>
+    <script>
+        <![CDATA[
+        require('../icon/axi-icon.bcp');
+        var console = require('Console');
+
+        var Component = require('../util.js').Component;
+
+        var fonts = require('./fonts.js');
+
+        function MyView(){
+            
+        }
+
+        MyView.prototype = {
+
+            initViewData: function(){
+                this.viewData = {
+                    data: {
+                        tablist: []
+                    },
+                    selectItem: function(index){
+                        if(this.curIndex===index) return;
+                        this.curIndex = index;
+                        this.setItems(this.data.tablist);
+                    }
+                };
+            },
+
+            setItems: function(arr){
+                this.$.util.each(this.__listData||[], function(i, source){
+                    var active = i===this.curIndex;
+                    if(!arr[i]) arr[i] = {};
+                    var item = arr[i];
+                    item.text = source.text;
+                    item.src = active ? source.selectedIconPath : source.iconPath;
+                    item.color = active ? this.data.selectedColor : this.data.color;
+                    if(active) this.events.changed.handler(i); // 触发changed事件
+                }, this);
+            },
+
+            initProto: function(){
+                var $ = this.$, jsDom = this.jsDom, $jsDom = this.$jsDom, comp = this;
+
+                var $text = $jsDom.find('#axiTitlebarText'), $icon = $jsDom.find('#axiTitlebarIcon');
+
+                var viewData = this.viewData, tablist = viewData.data.list;
+
+                this.curIndex = 0;
+
+                this.properties = {
+                    'color': {
+                        // memo: '文字颜色',
+                        type: String,
+                        value: '#7A7E83'
+                    },
+                    'selectedColor': {
+                        // memo: '选中文字颜色',
+                        type: String,
+                        value: '#3cc51f'
+                    },
+                    'borderStyle': {
+                        // memo: '边框颜色',
+                        type: String,
+                        value: '#000000'
+                    },
+                    'backgroundColor': {
+                        // memo: '背景颜色',
+                        type: String,
+                        value: '#ffffff'
+                    }
+                };
+                
+                var props = this.props = {
+                    'list': {
+                        // memo: 'tabbar item数组',
+                        type: Object,
+                        value: [],
+                        handler: function(val){
+                            comp.__listData = val||[];
+                            var arr = [];
+                            comp.setItems(arr);
+                            comp.setData({
+                                tablist: arr
+                            });
+                        }
+                    }
+                };
+
+
+                this.events = {
+                    'changed': {
+                        // memo: '选择item,{detail:{value:index}}',
+                        handler: function(index){
+                            if(arguments.length===0) return;
+                            $jsDom[0].fireExtend('changed', {
+                                detail: {
+                                    value: index
+                                }
+                            });
+                        }
+                    }
+                };
+
+            }
+        };
+
+        
+        module.exports = Component(MyView);
+
+    ]]>
+    </script>
+    <style>
+        axi-tabbar{
+            flex-direction: row;
+            width: 100%;
+            height: 60;
+            align-items: center;
+        }
+
+        .private-axi-tabbar-item{
+            flex: 1;
+            flex-direction: column;
+            align-items: center;
+        }
+        .private-axi-tabbar-item image{
+            width: 32;
+            height: 32;
+            scaleType: cover;
+        }
+
+        .private-axi-tabbar-item text{
+            font-size: 14;
+        }
+    </style>
+    <ui>
+        <box v-style="{'border-top-color':borderStyle, 'background-color':backgroundColor}" style="border-top-width:1;border-top-color:#ececec;">
+            <box v-for="item in tablist" class="private-axi-tabbar-item" v-on:click="selectItem($index)">
+                <box>
+                    <image v-bind:src="item.src"></image>
+                </box>
+                <text v-text="item.text" v-style="{color:item.color}"></text>
+            </box>
+        </box>
+    </ui>
+</page>

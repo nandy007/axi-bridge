@@ -1,0 +1,104 @@
+<page>
+    <module>
+        <![CDATA[
+    
+        ]]>
+    </module>
+    <script>
+        <![CDATA[
+        require('../icon/axi-icon.bcp');
+        var console = require('Console');
+
+        var Component = require('../util.js').Component;
+
+        var fonts = require('./fonts.js');
+
+        function MyView(){
+            
+        }
+
+        MyView.prototype = {
+            initProto: function(){
+                var $ = this.$, jsDom = this.jsDom, $jsDom = this.$jsDom, comp = this;
+
+                var $text = $jsDom.find('#axiTitlebarText'), $icon = $jsDom.find('#axiTitlebarIcon');
+                
+                var props = this.props = {
+                    'title': {
+                        // memo: '标题内容',
+                        type: String,
+                        handler: function(val){
+                            $text.text(val);
+                        }
+                    },
+                    'color': {
+                        // memo: '标题颜色',
+                        type: String,
+                        value: '#000000',
+                        handler: function(val){
+                            $text.css('color', val);
+                            $icon.css('color', val);
+                        }
+                    },
+                    'size': {
+                        // memo: '字体大小',
+                        type: Number,
+                        value: 20,
+                        handler: function(val){
+                            $text.css('font-size', val);
+                            $icon.css('font-size', val*2);
+                        }
+                    },
+                    'hide-left-side': {
+                        // memo: '隐藏左边区域',
+                        type: Boolean,
+                        handler: function(val){
+                            $icon[val?'hide':'show']();
+                        },
+                        init: function(){
+                            if($jsDom.hasAttr('hide-left-side')) this.handler(comp.getAttrValue('hide-left-side'));
+                        }
+                    }
+                };
+
+            }
+        };
+
+        
+        module.exports = Component(MyView);
+
+    ]]>
+    </script>
+    <style>
+        axi-titlebar{
+            flex-direction: row;
+            height: 50;
+        }
+        .private-axi-titlebar-title{
+            width:100%;
+            height: 100%;
+            padding: 0 60 0 60;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
+        .private-axi-titlebar-left{
+            position: absolute;
+            left: 0;
+            width: 60;
+            height: 100%;
+            flex-direction: row;
+            align-items: center;
+        }
+    </style>
+    <ui>
+        <box>
+            <box class="private-axi-titlebar-title">
+                <text id="axiTitlebarText"></text>
+            </box>
+            <box class="private-axi-titlebar-left">
+                <axi-icon id="axiTitlebarIcon" content="\uF141"></axi-icon>
+            </box>
+        </box>
+    </ui>
+</page>

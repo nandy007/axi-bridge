@@ -21,6 +21,8 @@
             require('../../axicomponent/picker/axi-select.bcp');
             require('../../axicomponent/picker/axi-pick-date.bcp');
             require('../../axicomponent/picker/axi-pick-time.bcp');
+            require('../../axicomponent/bar/axi-titlebar.bcp');
+            require('../../axicomponent/bar/axi-tabbar.bcp');
 
 
             var Page = require('../../axicomponent/util.js').Page;
@@ -50,9 +52,9 @@
                         // console.log($('axi-scroll-view').css('display'))
                         
                         comp.data.list.push({title:'这是标题4'})
-                        comp.setData({
-                            list: comp.data.list
-                        });
+                        // comp.setData({
+                        //     list: comp.data.list
+                        // });
 
                         // viewData.data.inputFocus = true;
 
@@ -90,11 +92,14 @@
                                 
                             },
                             linechange: function(e){
-                                this.setData({
-                                    line: e.detail.height
-                                });
+                                // this.setData({
+                                //     line: e.detail.height
+                                // });
                                 this.data.title = 33333
                                 // console.log(this.viewData.data.title);
+                            },
+                            tabChange: function(e){
+                                console.log(e.detail.value)
                             }
                         },
                         data: {
@@ -119,7 +124,8 @@
                             ],
                             line: 0,
                             percent: 60,
-                            inputFocus: false
+                            inputFocus: false,
+                            tablist: [{text:'组件',iconPath:'res:common/image/icon_component.png',selectedIconPath:'res:common/image/icon_component_HL.png'},{text:'接口',iconPath:'res:common/image/icon_API.png',selectedIconPath:'res:common/image/icon_API_HL.png'}]
                         }
                     };
                 }
@@ -133,7 +139,6 @@
         .rootBox {
             width: fill_screen;
             height: fill_screen;
-            padding: 4;
         }
 
         .myview{
@@ -162,9 +167,11 @@
 
     </style>
     <ui>
-        <box id="root" class="rootBox">
+        <axi-view id="root" class="rootBox">
+            <axi-titlebar hide-left-side="true" title="首页" style="border-bottom-width:1;border-bottom-color:#ececec;"></axi-titlebar>
+            <axi-view style="flex:1;padding:4 4 4 4;">
             <axi-scroll-view v-on:scroll="method.scroll" v-on:scrolltoupper="method.upper" v-on:scrolltolower="method.lower">
-                <text>{{title}}</text>
+                <axi-text v-bind:text="title"></axi-text>
                 <axi-text v-html="html" selectable="true" space="nbsp"></axi-text>
 
                 <axi-test v-bind:list="list" memo="测试对象属性"></axi-test>
@@ -243,7 +250,8 @@
                 <axi-view v-for="item in list" class="myview" hover-class="hoverclass" v-on:touchDown="method.doTouchDown($index)"><text>{{item.title}}</text></axi-view>
                 <box id="aaa"><text>dasdasdas</text></box>
             </axi-scroll-view>
-
-        </box>
+            </axi-view>
+            <axi-tabbar v-bind:list="tablist" v-on:changed="method.tabChange"></axi-tabbar>
+        </axi-view>
     </ui>
 </page>

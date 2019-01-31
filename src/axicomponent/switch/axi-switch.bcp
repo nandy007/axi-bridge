@@ -21,7 +21,7 @@
                 var $mask = $jsDom.find('#axiSwitchMask'), $out = $jsDom.find('#axiSwitchOut'), $btn = $jsDom.find('#axiSwitchBtn'), btn = $btn[0];
 
                 var defaultCheckedColor = '#1aad19';
-                var defaultBorderColor = '#ececec';
+                var defaultBorderColor = '#d1d1d1';
 
                 var props = this.props = {
                     'disabled': {
@@ -72,7 +72,8 @@
                             });
                             $btn.css({
                                 'right': val? '1' : '', 
-                                'border-width': val?'0':'1'
+                                'border-width': val ? '0' : '1',
+                                'opacity': val ? 1 : 0.3
                             });
                         }
                     }
@@ -114,7 +115,7 @@
         height: 32;
         border-radius: 16;
         border-width: 1;
-        border-color: #ececec;
+        border-color: #d1d1d1;
     }
     /* axi-switch.checked .private-axi-switch-out{
         border-width: 0;
@@ -127,7 +128,7 @@
         height: 30;
         border-radius: 15;
         border-width: 1;
-        border-color: #efefef;
+        border-color: #d1d1d1;
         background-color: #ffffff;
         margin-top: 1;
     }
