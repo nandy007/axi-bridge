@@ -22,15 +22,27 @@
                 var $text = $jsDom.find('#axiSelectText'), $mask = $jsDom.find('#axiSelectMask');
 
                 var props = this.props = {
+                    'placeholder': {
+                        type: String,
+                        handler: function(val){
+                            var value = comp.getAttrValue('value');
+                            if(value||!val) return;
+                            $text.text(val);
+                        }
+                    },
                     'value': {
                         // memo: '设置为options中某个选项的value值，并且为选中状态',
                         type: String,
                         handler: function(val){
+                            var value = '';
                             $.util.each(comp._options||[], function(i, item){
                                 if(item.value===val){
-                                    $text.text(item.text);
+                                    $text.text(value = item.text);
                                 }
                             });
+                            if(value===''){
+                                props.placeholder.handler(comp.getAttrValue('placeholder'));
+                            }
                         }
                     },
                     'options': {

@@ -151,11 +151,23 @@
                             comp._fields = val;
                         }
                     },
+                    'placeholder': {
+                        type: String,
+                        handler: function(val){
+                            var value = comp.getAttrValue('value');
+                            if(value||!val) return;
+                            $text.text(val);
+                        }
+                    },
                     'value': {
                         // memo: '表示选中的日期，格式为"YYYY-MM-DD"',
                         type: String,
                         handler: function(val){
-                            $text.text(val);
+                            if(val===''){
+                                props.placeholder.handler(comp.getAttrValue('placeholder'));
+                            }else{
+                                $text.text(val);
+                            }
                         }
                     },
                     'disabled': {
