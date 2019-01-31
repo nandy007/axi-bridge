@@ -18,6 +18,9 @@
             require('../../axicomponent/input/axi-input.bcp');
             require('../../axicomponent/textarea/axi-textarea.bcp');
             require('../../axicomponent/switch/axi-switch.bcp');
+            require('../../axicomponent/picker/axi-select.bcp');
+            require('../../axicomponent/picker/axi-pick-date.bcp');
+            require('../../axicomponent/picker/axi-pick-time.bcp');
 
 
             var Page = require('../../axicomponent/util.js').Page;
@@ -168,6 +171,14 @@
 
                 <axi-button type="warn" disabled="false" hover-class="hoverclass" loading="true"><text>这是一个button</text></axi-button>
                 <axi-view style="padding: 10 0 10 0;flex-direction:column;">
+
+                    <axi-view style="flex-direction:row;">
+                        <axi-switch checked="true"></axi-switch>
+                        <axi-switch checked="true" color="red" style="margin: 0 4 0 4;"></axi-switch>
+                        <axi-switch disabled="true"></axi-switch>
+                    </axi-view>
+                    
+
                     <axi-checkbox-group v-on:change="method.ckChange">
                         <axi-label class="group-item">
                             <axi-checkbox checked="true" color="red" value="cn" disabled="false"></axi-checkbox>
@@ -194,8 +205,14 @@
                     <axi-text v-text="'有多少行数据？答：'+line"></axi-text>
                     <axi-textarea v-on:linechange="method.linechange" auto-height="true" maxlength="-1" placeholder="请输入文本"></axi-textarea>
 
+                    <axi-select value="1" options="[{text:'内容1', value:'1'},{text:'内容2', value:'2'}]" disabled="false"></axi-select>
 
-                    <axi-switch checked="true"></axi-switch>
+                    <axi-pick-date fields="month"></axi-pick-date>
+                    <axi-pick-date start="1970-09-30" value="2001-10-05"></axi-pick-date>
+
+                    <axi-pick-time value="08:22"></axi-pick-time>
+
+                    <axi-pick-time start="07:30" end="14:31"></axi-pick-time>
                 
                 </axi-view>
 
@@ -224,8 +241,7 @@
                     </axi-swiper-item>
                 </axi-swiper>
                 <axi-view v-for="item in list" class="myview" hover-class="hoverclass" v-on:touchDown="method.doTouchDown($index)"><text>{{item.title}}</text></axi-view>
-                <box style="width:400;height:1000;"></box>
-                <box id="aaa"><text>dasdasdas</text></box> -->
+                <box id="aaa"><text>dasdasdas</text></box>
             </axi-scroll-view>
 
         </box>

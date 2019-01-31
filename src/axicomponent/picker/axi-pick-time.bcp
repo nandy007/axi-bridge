@@ -1,0 +1,199 @@
+<page>
+    <module>
+        <![CDATA[
+    
+        ]]>
+    </module>
+    <script>
+        <![CDATA[
+        var console = require('Console');
+        var ui = require('UI');
+
+        var Component = require('../util.js').Component;
+        var dateUtil = require('./dateUtil.js');
+
+        function MyView(){
+
+        }
+
+        MyView.prototype = {
+
+            splitTime: function(start){
+                var ss = start.split(':');
+                this.$.util.each(ss, function(i, item){
+                    ss[i] = Number(item);
+                });
+                return ss;
+            },
+
+            createPickTimeItem(start, end, val){
+                var data = [];
+                var hourStart = start[0], hourEnd = end[0], _miStart = start[1], _miEnd = end[1];
+                var value = [];
+                
+                if(val && val.length>0){
+                    var hourVal = val[0], miVal = val[1];
+                    value.push({
+                        name: dateUtil.patchZero(hourVal)+'时'
+                    });
+                    value.push({
+                        name: dateUtil.patchZero(miVal)+'分'
+                    });
+                }
+
+                for(var hi=hourStart;hi<=hourEnd;hi++){
+                    var arr = [];
+                    var hObj = {
+                        name: dateUtil.patchZero(hi)+'时',
+                        child: arr
+                    }
+
+                    var miStart = hi===hourStart ? _miStart : 0, miEnd = hi===hourEnd ? _miEnd : 59;
+                    for(var mi=miStart;mi<=miEnd;mi++){
+                        var mObj = {
+                            name: dateUtil.patchZero(mi)+'分',
+                        };
+                        arr.push(mObj);
+                    }
+                    data.push(hObj);
+                }
+
+                console.log(value);
+                
+                return {
+                    data: data,
+                    val: value
+                };
+            },
+
+            createPickerData: function(){
+                var curDate = new Date();
+
+                var start = this.splitTime(this._start || '00:00'), 
+                    end = this.splitTime(this._end || '23:59'), 
+                    val = this.getAttrValue('value');
+
+                val = val ? this.splitTime(val) : [];
+
+                return this.createPickTimeItem(start, end, val);
+            },
+
+            initProto: function(){
+                var $jsDom = this.$jsDom, $ = this.$, comp = this, root = this.root, $root = this.$root;
+
+                var $text = $jsDom.find('#axiPickTimeText'), $mask = $jsDom.find('#axiPickTimeMask');
+
+                var props = this.props = {
+                    'start': {
+                        // memo: '表示有效时间范围的开始，字符串格式为"hh:mm"',
+                        type: String ,
+                        handler: function(val){
+                            comp._start = val;
+                        }
+                    },
+                    'end': {
+                        // memo: '表示有效时间范围的结束，字符串格式为"hh:mm"',
+                        type: String ,
+                        handler: function(val){
+                            comp._end = val;
+                        }
+                    },
+                    'value': {
+                        // memo: '表示选中的时间，格式为"hh:mm"',
+                        type: String,
+                        handler: function(val){
+                            $text.text(val);
+                        }
+                    },
+                    'disabled': {
+                        // memo: '是否禁用',
+                        type: Boolean,
+                        handler: function(val){
+                            $mask[val?'show':'hide']();
+                        },
+                        init: function(){
+                            $mask.on('click', function(){});
+                            if($jsDom.hasAttr('disabled')) this.handler(comp.getAttrValue('disabled'));
+                        }
+                    }
+                };
+
+                var events = this.events = {
+                    'click': {
+                        memo: '点击事件，触发change和cancel事件',
+                        handler: function(){
+                            $jsDom.on('click', function(){
+
+                                var configData = comp.createPickerData();
+                                ui.openPicker({
+                                    config: {
+                                        type: 'union',
+                                        col: 2
+                                    },
+                                    data: configData.data,
+                                    value: configData.val
+                                }, function(rs){
+                                    if(rs.code===-1){
+                                        events.cancel.handler(-1);
+                                    }else{
+                                        events.change.handler(rs.value);
+                                    }
+                                });
+                                
+                            });
+                        }
+                    },
+                    'change': {
+                        memo: 'value 改变时触发 change 事件，event.detail = {value: value}',
+                        handler: function(rs){
+                            if(arguments.length===0) return; // 不需要初始化
+                            var val = dateUtil.formateValue(rs, ':');
+                            $jsDom.attr('value', val);
+                            $jsDom[0].fireExtend('change', {
+                                detail: {
+                                    value: val
+                                }
+                            });
+                        }
+                    },
+                    'cancel': {
+                        memo: '取消选择或点遮罩层收起 picker 时触发',
+                        handler: function(val){
+                            if(arguments.length===0) return; // 不需要初始化
+                            $jsDom[0].fire('cancel');
+                        }
+                    }
+                };
+            }
+        };
+
+        
+        module.exports = Component(MyView);
+
+    ]]>
+    </script>
+    <style>
+        axi-pick-time{
+            width: 100%;
+            height: 40;
+        }
+        axi-pick-time #axiPickTimeBtn{
+            width: 100%;
+            height: 100%;
+            flex-direction: row;
+            align-items: center;
+        }
+        axi-pick-time #axiPickTimeMask{
+            position: absolute;
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <ui>
+        <box>
+            <box id="axiPickTimeBtn"><text id="axiPickTimeText"></text></box>
+            <box id="axiPickTimeMask"></box>
+        </box>
+    </ui>
+</page>

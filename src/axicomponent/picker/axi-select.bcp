@@ -1,0 +1,134 @@
+<page>
+    <module>
+        <![CDATA[
+    
+        ]]>
+    </module>
+    <script>
+        <![CDATA[
+        var console = require('Console');
+        var ui = require('UI');
+
+        var Component = require('../util.js').Component;
+
+        function MyView(){
+
+        }
+
+        MyView.prototype = {
+            initProto: function(){
+                var $jsDom = this.$jsDom, $ = this.$, comp = this, root = this.root, $root = this.$root;
+
+                var $text = $jsDom.find('#axiSelectText'), $mask = $jsDom.find('#axiSelectMask');
+
+                var props = this.props = {
+                    'value': {
+                        // memo: '设置为options中某个选项的value值，并且为选中状态',
+                        type: String,
+                        handler: function(val){
+                            $.util.each(comp._options||[], function(i, item){
+                                if(item.value===val){
+                                    $text.text(item.text);
+                                }
+                            });
+                        }
+                    },
+                    'options': {
+                        // memo: 'select的选项，为对象数组，对象必须包含text和value，为自有属性',
+                        type: Object ,
+                        value: [],
+                        handler: function(val){
+                            comp._options = val;
+                            props.value.handler(comp.getAttrValue('value'));
+                        }
+                    },
+                    'disabled': {
+                        // memo: '是否禁用',
+                        type: Boolean,
+                        handler: function(val){
+                            $mask[val?'show':'hide']();
+                        },
+                        init: function(){
+                            $mask.on('click', function(){});
+                            if($jsDom.hasAttr('disabled')) this.handler(comp.getAttrValue('disabled'));
+                        }
+                    }
+                };
+
+                var events = this.events = {
+                    'click': {
+                        memo: '点击事件，触发change和cancel事件',
+                        handler: function(){
+                            $jsDom.on('click', function(){
+
+                                var buttonTexts = [], options = $.util.copyArray(comp._options);
+                                $.util.each(options, function(i, item){
+                                    buttonTexts.push(item.text);
+                                });
+                                ui.actionSheet({
+                                    buttonTexts: buttonTexts
+                                }, function(index){
+                                    if(index<0){
+                                        events.cancel.handler(index);
+                                    }else{
+                                        var val = options[index];
+                                        events.change.handler(val);
+                                    }
+                                });
+                                
+                            });
+                        }
+                    },
+                    'change': {
+                        memo: 'value 改变时触发 change 事件，event.detail = {value: value}',
+                        handler: function(item){
+                            if(arguments.length===0) return; // 不需要初始化
+                            $jsDom.attr('value', item.value);
+                            $jsDom[0].fireExtend('change', {
+                                detail: {
+                                    value: item.value
+                                }
+                            });
+                        }
+                    },
+                    'cancel': {
+                        memo: '取消选择或点遮罩层收起 picker 时触发',
+                        handler: function(val){
+                            if(arguments.length===0) return; // 不需要初始化
+                            $jsDom[0].fire('cancel');
+                        }
+                    }
+                };
+            }
+        };
+
+        
+        module.exports = Component(MyView);
+
+    ]]>
+    </script>
+    <style>
+        axi-select{
+            width: 100%;
+            height: 40;
+        }
+        axi-select #axiSelectBtn{
+            width: 100%;
+            height: 100%;
+            flex-direction: row;
+            align-items: center;
+        }
+        axi-select #axiSelectMask{
+            position: absolute;
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <ui>
+        <box>
+            <box id="axiSelectBtn"><text id="axiSelectText"></text></box>
+            <box id="axiSelectMask"></box>
+        </box>
+    </ui>
+</page>

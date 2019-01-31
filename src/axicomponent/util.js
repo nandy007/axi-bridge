@@ -5,6 +5,8 @@ var console = require("Console");
 var $ = require('JQLite');
 var BaseComponent = $.BaseComponent;
 
+document.refreshTimeout = 20;
+
 $.vm.addEventFilter({
     'default': function(el, e, param){
         if(!e.detail) e.detail = param || {};

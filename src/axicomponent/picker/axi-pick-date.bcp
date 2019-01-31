@@ -1,0 +1,252 @@
+<page>
+    <module>
+        <![CDATA[
+    
+        ]]>
+    </module>
+    <script>
+        <![CDATA[
+        var console = require('Console');
+        var ui = require('UI');
+
+        var Component = require('../util.js').Component;
+        var dateUtil = require('./dateUtil.js');
+
+        function MyView(){
+
+        }
+
+        MyView.prototype = {
+
+            getCols: function(fields){
+                fields = fields || 'day';
+                var cols = {
+                    year: 1,
+                    month: 2,
+                    day: 3
+                };
+                return cols[fields] || cols['day'];
+            },
+
+            splitDate: function(cols, str){
+                var arr = str.split('-'), rs = [];
+                for(var i=0;i<cols;i++){
+                    var item = Number(arr[i] || '1');
+                    rs.push(item);
+                }
+                return rs;
+            },
+
+            compareDate: function(data, last, col){
+                if(data[col]&&last[col]&&(data[col]===Number(last[col]))){
+                    return data[col+1];
+                }
+                return null;
+            },
+
+            createPickDataItem: function(data, col, cols, start, end, last){
+                if(col===cols) return;
+
+                last = last || [];
+                var startVal, endVal;
+                if(col===0){
+                    startVal = start[col];
+                    endVal = end[col];
+                }else if(col===1){
+                    if(start[0]&&last[0]&&(start[0]===Number(last[0]))){
+                        startVal = start[1];
+                    }
+                    if(end[0]&&last[0]&&(end[0]===Number(last[0]))){
+                        endVal = end[1]
+                    }
+
+                    startVal = this.compareDate(start, last, 0) || 1;
+                    endVal = this.compareDate(end, last, 0) || 12;
+                    
+                }else if(col===2){
+                    startVal = this.compareDate(start, last, 1) || 1;
+                    endVal = this.compareDate(end, last, 1) ;
+
+                    if(!endVal){
+                        last.push('01');
+                        endVal = dateUtil.getMonthLength(last.join('-'));
+                    }
+                }
+
+                for(var i=startVal;i<=endVal;i++){
+                    var arr = [];
+                    
+                    var _last = this.$.util.copyArray(last);
+                    
+                    _last.push(dateUtil.patchZero(i));
+                    
+                    this.createPickDataItem(arr, col+1, cols, start, end, _last);
+
+                    var obj = {
+                        name: this.getItemStr(i, col),
+                        child: arr
+                    };
+                    data.push(obj);
+                }
+            },
+
+            createPickerData: function(){
+                var curDate = new Date();
+
+                var cols = this.getCols(this._fields), 
+                    start = this.splitDate(cols, this._start || dateUtil.getBrforeDatDate(-365*30)), 
+                    end = this.splitDate(cols, this._end || dateUtil.getBrforeDatDate(365*30)), 
+                    val = this.getAttrValue('value');
+
+                val = val ? this.splitDate(cols, val) : [];
+
+                var data = [];
+
+                this.createPickDataItem(data, 0, cols, start, end, []);
+
+                this.$.util.each(val, function(i, item){
+                    val[i] = {
+                        name: this.getItemStr(item, i)
+                    };
+                }, this);
+
+                return {
+                    cols: cols,
+                    data: data,
+                    val: val
+                };
+
+            },
+
+            getItemStr: function(num, index){
+                var str = ['年', '月', '日'];
+                return dateUtil.patchZero(num) + str[index];
+            },
+
+
+            initProto: function(){
+                var $jsDom = this.$jsDom, $ = this.$, comp = this, root = this.root, $root = this.$root;
+
+                var $text = $jsDom.find('#axiPickDateText'), $mask = $jsDom.find('#axiPickDateMask');
+
+                var props = this.props = {
+                    'start': {
+                        // memo: '表示有效日期范围的开始，字符串格式为"YYYY-MM-DD"',
+                        type: String ,
+                        handler: function(val){
+                            comp._start = val;
+                        }
+                    },
+                    'end': {
+                        // memo: '表示有效日期范围的结束，字符串格式为"YYYY-MM-DD"',
+                        type: String ,
+                        handler: function(val){
+                            comp._end = val;
+                        }
+                    },
+                    'fields': {
+                        // memo: '有效值 year,month,day，表示选择器的粒度',
+                        type: String ,
+                        handler: function(val){
+                            comp._fields = val;
+                        }
+                    },
+                    'value': {
+                        // memo: '表示选中的日期，格式为"YYYY-MM-DD"',
+                        type: String,
+                        handler: function(val){
+                            $text.text(val);
+                        }
+                    },
+                    'disabled': {
+                        // memo: '是否禁用',
+                        type: Boolean,
+                        handler: function(val){
+                            $mask[val?'show':'hide']();
+                        },
+                        init: function(){
+                            $mask.on('click', function(){});
+                            if($jsDom.hasAttr('disabled')) this.handler(comp.getAttrValue('disabled'));
+                        }
+                    }
+                };
+
+                var events = this.events = {
+                    'click': {
+                        memo: '点击事件，触发change和cancel事件',
+                        handler: function(){
+                            $jsDom.on('click', function(){
+                                var configData = comp.createPickerData();
+                                ui.openPicker({
+                                    config: {
+                                        type: 'union',
+                                        col: configData.cols,
+
+                                    },
+                                    data: configData.data,
+                                    value: configData.val
+                                }, function(rs){
+                                    if(rs.code===-1){
+                                        events.cancel.handler(-1);
+                                    }else{
+                                        events.change.handler(rs.value);
+                                    }
+                                });
+                                
+                            });
+                        }
+                    },
+                    'change': {
+                        memo: 'value 改变时触发 change 事件，event.detail = {value: value}',
+                        handler: function(rs){
+                            if(arguments.length===0) return; // 不需要初始化
+                            var val = dateUtil.formateValue(rs, '-');
+                            $jsDom.attr('value', val);
+                            $jsDom[0].fireExtend('change', {
+                                detail: {
+                                    value: val
+                                }
+                            });
+                        }
+                    },
+                    'cancel': {
+                        memo: '取消选择时触发',
+                        handler: function(val){
+                            if(arguments.length===0) return; // 不需要初始化
+                            $jsDom[0].fire('cancel');
+                        }
+                    }
+                };
+            }
+        };
+
+        
+        module.exports = Component(MyView);
+
+    ]]>
+    </script>
+    <style>
+        axi-pick-date{
+            width: 100%;
+            height: 40;
+        }
+        axi-pick-date #axiPickDateBtn{
+            width: 100%;
+            height: 100%;
+            flex-direction: row;
+            align-items: center;
+        }
+        axi-pick-date #axiPickDateMask{
+            position: absolute;
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <ui>
+        <box>
+            <box id="axiPickDateBtn"><text id="axiPickDateText"></text></box>
+            <box id="axiPickDateMask"></box>
+        </box>
+    </ui>
+</page>
