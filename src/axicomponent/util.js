@@ -18,6 +18,14 @@ $.vm.setVMPre({
     data: 'data'
 });
 
+// 简单实现tap事件
+function hackTapEvent(){
+    var root = document.getRootElement();
+    root.on('click', function(e){
+        e.target.fire('tap');
+    });
+}
+
 module.exports = {
     Component: function(MyClass){
         MyClass = BaseComponent.wrapperClass(MyClass);
@@ -104,6 +112,8 @@ module.exports = {
             window.on('destroy', function(){
                 jsDom.fire('leave');
             });
+
+            hackTapEvent();
         });
         
     }
