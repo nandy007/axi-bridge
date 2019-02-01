@@ -22,6 +22,7 @@
                 var $text = $jsDom.find('#axiSelectText'), $mask = $jsDom.find('#axiSelectMask');
 
                 var props = this.props = {
+                    // memo: '没有值的时候的提示语',
                     'placeholder': {
                         type: String,
                         handler: function(val){

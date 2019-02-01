@@ -1,0 +1,108 @@
+<page>
+    <module>
+        <![CDATA[
+    
+        ]]>
+    </module>
+    <script>
+        <![CDATA[
+        var console = require('Console');
+        var ui = require('UI');
+
+        var Component = require('../util.js').Component;
+
+        function MyView(){
+
+        }
+
+        MyView.prototype = {
+            initProto: function(){
+                var $jsDom = this.$jsDom, $ = this.$, comp = this, img = this.root, $img = this.$root;
+
+
+                var props = this.props = {
+                    'src': {
+                        // memo: '图片地址',
+                        type: String,
+                        handler: function(val){
+                            $img.attr('src', val);
+                        }
+                    },
+                    'mode': {
+                        // memo: '图片裁剪、缩放的模式',
+                        type: String,
+                        value: 'scaleToFill', 
+                        enum: { // 目前只支持三种小程序的scaleToFill、aspectFill、aspectFit和扩展autoFit
+                            autoFit: 'autoFit',// 自适应宽高
+                            scaleToFill: 'stretch',
+                            aspectFill: 'cover',
+                            aspectFit: 'contain'
+                        },
+                        getStyle: function(name){
+                            return this.enum[name] || this.enum[this.value];
+                        },
+                        handler: function(val){
+                            if(val==='autoFit'){
+                                if(comp.__trueSize){
+                                    $img.css(comp.__trueSize);
+                                }
+                            }else{
+                                $img.css('scaleType', this.getStyle(val));
+                            }
+                        }
+                    }
+                };
+
+                var events = this.events = {
+                    'error': {
+                        // memo: '当错误发生时，发布到 AppService 的事件名，事件对象event.detail = {errMsg: 'something wrong'}',
+                        handler: function(){
+                            $img.on('failed', function(){
+
+                                $img.on('loaded', function(e,param){
+                                    img.fireExtend('error', {
+                                        detail: {
+                                            errMsg: 'load failed'                                      }
+                                    });
+                                });
+                                
+                            });
+                        }
+                    },
+                    'load': {
+                        // memo: '当图片载入完毕时，发布到 AppService 的事件名，事件对象event.detail = {height:'图片高度px', width:'图片宽度px'}',
+                        handler: function(){
+                            $img.on('loaded', function(e,param){
+                                comp.__trueSize = {
+                                    width: param.width,
+                                    height: param.height
+                                };
+                                if(comp.getAttrValue('mode')==='autoFit'){
+                                    $img.css(comp.__trueSize);
+                                }
+                                img.fireExtend('load', {
+                                    detail: {
+                                        width: param.width,
+                                        height: param.height
+                                    }
+                                });
+                                
+                            });
+                        }
+                    }
+                };
+            }
+        };
+
+        
+        module.exports = Component(MyView);
+
+    ]]>
+    </script>
+    <style>
+        
+    </style>
+    <ui>
+        <image cacheType="memory" fade="true"></image>
+    </ui>
+</page>

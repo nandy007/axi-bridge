@@ -33,8 +33,9 @@
             },
 
             setItems: function(arr){
+                var curIndex = this.curIndex;
                 this.$.util.each(this.__listData||[], function(i, source){
-                    var active = i===this.curIndex;
+                    var active = i===curIndex;
                     if(!arr[i]) arr[i] = {};
                     var item = arr[i];
                     item.text = source.text;
@@ -51,7 +52,7 @@
 
                 var viewData = this.viewData, tablist = viewData.data.list;
 
-                this.curIndex = 0;
+                // this.curIndex = 0;
 
                 this.properties = {
                     'color': {
@@ -77,6 +78,19 @@
                 };
                 
                 var props = this.props = {
+                    'current': {
+                        // memo: '当前所在item的 index',
+                        type: Number,
+                        value: 0,
+                        handler: function(val){
+                            if(comp.curIndex===val) return;
+                            comp.curIndex = val;
+                            comp.setItems(comp.data.tablist);
+                        },
+                        init: function(){
+                            comp.curIndex = comp.getAttrValue('current');
+                        }
+                    },
                     'list': {
                         // memo: 'tabbar item数组',
                         type: Object,
