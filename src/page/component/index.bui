@@ -94,9 +94,9 @@
                                 
                             },
                             linechange: function(e){
-                                // this.setData({
-                                //     line: e.detail.height
-                                // });
+                                this.setData({
+                                    line: e.detail.height
+                                });
                                 this.data.title = 33333
                                 // console.log(this.viewData.data.title);
                             },
@@ -143,8 +143,8 @@
     </script>
     <style>
         .rootBox {
-            width: fill_screen;
-            height: fill_screen;
+            width: 100%;
+            height: 100%;
         }
 
         .myview{
