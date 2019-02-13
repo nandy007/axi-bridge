@@ -20,14 +20,14 @@
         MyView.prototype = {
 
             initViewData: function(){
+                var $jsDom = this.$jsDom;
                 this.viewData = {
                     data: {
                         tablist: []
                     },
                     selectItem: function(index){
                         if(this.curIndex===index) return;
-                        this.curIndex = index;
-                        this.setItems(this.data.tablist);
+                        $jsDom.attr('current', index);
                     }
                 };
             },
