@@ -1,7 +1,7 @@
 {
   "jsPaths": {
     "mainjs": "res:myapp/js/main.js",
-    "JQLite": "res:common/util/agile.ce.native.js",
+    "JQLite": "res:axicomponent/agile.ce.native.js",
     "listjs": "res:myapp/js/list.js",
     "list_newsjs": "res:myapp/js/list_news.js",
     "detailjs": "res:myapp/js/detail.js"
