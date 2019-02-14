@@ -61,12 +61,15 @@
                         comp.data.tabIndex = 0;
 
                     }, 3000);
+
+                    
                 },
                 initViewData: function(){
                     this.viewData = {
                         method: {
                             doTouchDown: function(e){
                                 console.log(JSON.stringify(e.target.dataset));
+                                console.log(JSON.stringify(e.currentTarget.dataset));
                             },
                             scroll: function(e){
                                 // console.log(e.detail)
@@ -105,6 +108,9 @@
                             },
                             tap: function(e){
                                 console.log(e.target)
+                            },
+                            click: function(e){
+                                console.log(e.currentTarget.dataset)
                             }
                         },
                         data: {
@@ -188,7 +194,7 @@
 
                 <axi-test v-bind:list="list" memo="测试对象属性"></axi-test>
 
-                <axi-button type="warn" disabled="false" hover-class="hoverclass" loading="true"><text>这是一个button</text></axi-button>
+                <axi-button id="ttt" data-aaa-bbb="ccc" type="warn" disabled="false" hover-class="hoverclass" loading="true" v-on:click="method.click"><text>这是一个button</text></axi-button>
                 <axi-view style="padding: 10 0 10 0;flex-direction:column;">
 
                     <axi-view style="flex-direction:row;">
@@ -259,7 +265,7 @@
                         <image v-bind:src="pic.src" style="flex:1;" />
                     </axi-swiper-item>
                 </axi-swiper>
-                <axi-view v-for="item in list" v-bind:data-index="$index" class="myview" hover-class="hoverclass" v-on:touchDown="method.doTouchDown"><text>{{item.title}}</text></axi-view>
+                <axi-view v-for="item in list" v-bind:data-index="$index" class="myview" hover-class="hoverclass" v-on:touchDown="method.doTouchDown" data-aaa="111"><text v-bind:data-bbb="item.title">{{item.title}}</text></axi-view>
                 <box id="aaa"><text>dasdasdas</text></box>
             </axi-scroll-view>
             </axi-view>
