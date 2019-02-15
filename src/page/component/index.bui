@@ -26,22 +26,134 @@
             require('../../axicomponent/image/axi-image.bcp');
 
 
-            var Page = require('../../axicomponent/util.js').Page;
+            // var Page = require('../../axicomponent/util.js').Page;
             var console = require("Console");
             var document = require("Document");
             var time = require('Time');
 
-            function MyPage(jsDom){
+            // function MyPage(jsDom){
 
-            }
+            // }
 
-            MyPage.prototype = {
-                created: function(){
-                    // console.log(this.jsDom.getInnerHTML());
+            // MyPage.prototype = {
+            //     created: function(){
+            //         // console.log(this.jsDom.getInnerHTML());
+            //         var comp = this;
+            //         var viewData = this.viewData;
+            //         viewData.data.pics.push({ src: 'res:common/resources/pic/1.jpg' });
+            //         viewData.data.list.push({ title: '这是标题3' });
+            //         // viewData.data.title = '2222';
+            //         var $ = this.$, $jsDom = $(this.jsDom);
+            //         // $('axi-scroll-view').hide();
+            //         time.setTimeout(function() {
+            //             // $('axi-scroll-view').attr('scroll-into-view', "aaa");
+            //             // $('#p').attr('percent', 100);
+            //             comp.data.percent = 100;
+            //             // $('axi-scroll-view').show();
+            //             // console.log($('axi-scroll-view').css('display'))
+                        
+            //             comp.data.list.push({title:'这是标题4'})
+            //             // comp.setData({
+            //             //     list: comp.data.list
+            //             // });
+
+            //             // viewData.data.inputFocus = true;
+            //             comp.data.tabIndex = 0;
+
+            //         }, 3000);
+
+                    
+            //     },
+            //     initViewData: function(){
+            //         this.viewData = {
+            //             method: {
+            //                 doTouchDown: function(e){
+            //                     console.log(JSON.stringify(e.target.dataset));
+            //                     console.log(JSON.stringify(e.currentTarget.dataset));
+            //                 },
+            //                 scroll: function(e){
+            //                     // console.log(e.detail)
+            //                 },
+            //                 upper: function(){
+            //                     // console.log(111)
+            //                 },
+            //                 lower: function(){
+            //                     // console.log(222)
+            //                 },
+            //                 swiperChange: function(e){
+            //                     // console.log(e)
+            //                 },
+            //                 ckChange: function(e){
+            //                     // console.log(JSON.stringify(e.detail));
+            //                 },
+            //                 focus: function(e){
+            //                     // console.log(e.detail)
+            //                 },
+            //                 input: function(e){
+            //                     val = e.detail.value;
+            //                     if(val==='22'){
+            //                         return '444';
+            //                     }
+                                
+            //                 },
+            //                 linechange: function(e){
+            //                     this.setData({
+            //                         line: e.detail.height
+            //                     });
+            //                     this.data.title = 33333
+            //                     // console.log(this.viewData.data.title);
+            //                 },
+            //                 tabChange: function(e){
+            //                     // console.log(e.detail.value)
+            //                 },
+            //                 tap: function(e){
+            //                     console.log(e.target)
+            //                 },
+            //                 click: function(e){
+            //                     console.log(e.currentTarget.dataset)
+            //                 }
+            //             },
+            //             data: {
+            //                 title: '这是标题',
+            //                 html: '<b>fsdfds</b> &lt; dfd    <span style="color:blue;">fdsfdsf</span>   <br>这&nbsp;&nbsp;&nbsp;&nbsp;是<font color="red">富文本</font>来的',
+            //                 text: 'aaa   bbb',
+            //                 list: [
+            //                     {
+            //                         title: '这是标题1'
+            //                     },
+            //                     {
+            //                         title: '这是标题2'
+            //                     }
+            //                 ],
+            //                 pics: [
+            //                     {
+            //                         src: 'res:common/resources/pic/1.jpg'
+            //                     },
+            //                     {
+            //                         src: 'res:common/resources/pic/2.jpg'
+            //                     }
+            //                 ],
+            //                 line: 0,
+            //                 percent: 60,
+            //                 inputFocus: false,
+            //                 tabIndex: 1,
+            //                 tablist: [{text:'组件',iconPath:'res:common/image/icon_component.png',selectedIconPath:'res:common/image/icon_component_HL.png'},{text:'接口',iconPath:'res:common/image/icon_API.png',selectedIconPath:'res:common/image/icon_API_HL.png'}]
+            //             }
+            //         };
+            //     }
+            // };
+
+            // Page(MyPage);
+
+            var Page = require('../../axicomponent/include.js')({}).Page;
+
+            Page({
+                onLoad: function(){
                     var comp = this;
-                    var viewData = this.viewData;
-                    viewData.data.pics.push({ src: 'res:common/resources/pic/1.jpg' });
-                    viewData.data.list.push({ title: '这是标题3' });
+                    
+                    // var viewData = this.viewData;
+                    this.data.pics.push({ src: 'res:common/resources/pic/1.jpg' });
+                    this.data.list.push({ title: '这是标题3' });
                     // viewData.data.title = '2222';
                     var $ = this.$, $jsDom = $(this.jsDom);
                     // $('axi-scroll-view').hide();
@@ -61,89 +173,81 @@
                         comp.data.tabIndex = 0;
 
                     }, 3000);
-
-                    
                 },
-                initViewData: function(){
-                    this.viewData = {
-                        method: {
-                            doTouchDown: function(e){
-                                console.log(JSON.stringify(e.target.dataset));
-                                console.log(JSON.stringify(e.currentTarget.dataset));
-                            },
-                            scroll: function(e){
-                                // console.log(e.detail)
-                            },
-                            upper: function(){
-                                // console.log(111)
-                            },
-                            lower: function(){
-                                // console.log(222)
-                            },
-                            swiperChange: function(e){
-                                // console.log(e)
-                            },
-                            ckChange: function(e){
-                                // console.log(JSON.stringify(e.detail));
-                            },
-                            focus: function(e){
-                                // console.log(e.detail)
-                            },
-                            input: function(e){
-                                val = e.detail.value;
-                                if(val==='22'){
-                                    return '444';
-                                }
-                                
-                            },
-                            linechange: function(e){
-                                this.setData({
-                                    line: e.detail.height
-                                });
-                                this.data.title = 33333
-                                // console.log(this.viewData.data.title);
-                            },
-                            tabChange: function(e){
-                                // console.log(e.detail.value)
-                            },
-                            tap: function(e){
-                                console.log(e.target)
-                            },
-                            click: function(e){
-                                console.log(e.currentTarget.dataset)
-                            }
-                        },
-                        data: {
-                            title: '这是标题',
-                            html: '<b>fsdfds</b> &lt; dfd    <span style="color:blue;">fdsfdsf</span>   <br>这&nbsp;&nbsp;&nbsp;&nbsp;是<font color="red">富文本</font>来的',
-                            text: 'aaa   bbb',
-                            list: [
-                                {
-                                    title: '这是标题1'
-                                },
-                                {
-                                    title: '这是标题2'
-                                }
-                            ],
-                            pics: [
-                                {
-                                    src: 'res:common/resources/pic/1.jpg'
-                                },
-                                {
-                                    src: 'res:common/resources/pic/2.jpg'
-                                }
-                            ],
-                            line: 0,
-                            percent: 60,
-                            inputFocus: false,
-                            tabIndex: 1,
-                            tablist: [{text:'组件',iconPath:'res:common/image/icon_component.png',selectedIconPath:'res:common/image/icon_component_HL.png'},{text:'接口',iconPath:'res:common/image/icon_API.png',selectedIconPath:'res:common/image/icon_API_HL.png'}]
+                method: {
+                    doTouchDown: function(e){
+                        console.log(JSON.stringify(e.target.dataset));
+                        console.log(JSON.stringify(e.currentTarget.dataset));
+                    },
+                    scroll: function(e){
+                        // console.log(e.detail)
+                    },
+                    upper: function(){
+                        // console.log(111)
+                    },
+                    lower: function(){
+                        // console.log(222)
+                    },
+                    swiperChange: function(e){
+                        // console.log(e)
+                    },
+                    ckChange: function(e){
+                        // console.log(JSON.stringify(e.detail));
+                    },
+                    focus: function(e){
+                        // console.log(e.detail)
+                    },
+                    input: function(e){
+                        val = e.detail.value;
+                        if(val==='22'){
+                            return '444';
                         }
-                    };
+                                
+                    },
+                    linechange: function(e){
+                        this.setData({
+                            line: e.detail.height
+                        });
+                        this.data.title = 33333
+                        // console.log(this.viewData.data.title);
+                    },
+                    tabChange: function(e){
+                        // console.log(e.detail.value)
+                    },
+                    tap: function(e){
+                        console.log(e.target)
+                    },
+                    click: function(e){
+                        console.log(e.currentTarget.dataset)
+                    }
+                },
+                data: {
+                    title: '这是标题',
+                    html: '<b>fsdfds</b> &lt; dfd    <span style="color:blue;">fdsfdsf</span>   <br>这&nbsp;&nbsp;&nbsp;&nbsp;是<font color="red">富文本</font>来的',
+                    text: 'aaa   bbb',
+                    list: [
+                        {
+                            title: '这是标题1'
+                        },
+                        {
+                            title: '这是标题2'
+                        }
+                    ],
+                    pics: [
+                        {
+                            src: 'res:common/resources/pic/1.jpg'
+                        },
+                        {
+                            src: 'res:common/resources/pic/2.jpg'
+                        }
+                    ],
+                    line: 0,
+                    percent: 60,
+                    inputFocus: false,
+                    tabIndex: 1,
+                    tablist: [{text:'组件',iconPath:'res:common/image/icon_component.png',selectedIconPath:'res:common/image/icon_component_HL.png'},{text:'接口',iconPath:'res:common/image/icon_API.png',selectedIconPath:'res:common/image/icon_API_HL.png'}]
                 }
-            };
-
-            Page(MyPage);
+            });
 
         ]]>
     </script>
@@ -271,5 +375,6 @@
             </axi-view>
             <axi-tabbar v-bind:list="tablist" v-bind:current="tabIndex" v-on:changed="method.tabChange"></axi-tabbar>
         </axi-view>
+
     </ui>
 </page>

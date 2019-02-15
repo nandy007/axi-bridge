@@ -1,6 +1,6 @@
 /*
  *	Agile CE 移动前端MVVM框架
- *	Version	:	0.4.52.1550129462836 beta
+ *	Version	:	0.4.59.1550225761098 beta
  *	Author	:	nandy007
  *	License MIT @ https://github.com/nandy007/agile-ce
  */var __ACE__ = {};
@@ -144,7 +144,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 			var scope = this.$scope;
 
-			var depsalias = Parser.getDepsAlias(expression, fors);
+			var depsalias = Parser.getDepsAlias(expression, fors, parser.getVmPre());
 			var deps = depsalias.deps;
 			var exps = depsalias.exps;
 
@@ -185,7 +185,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 			var alias = parseSer.alias,
 			    indexAlias = parseSer.indexAlias || $node.attr('for-index') || '$index',
 			    access = parseSer.access,
-			    $access = Parser.makeDep(access, fors),
+			    $access = Parser.makeDep(access, fors, parser.getVmPre()),
 			    aliasGroup = { alias: alias, indexAlias: indexAlias };
 
 			var forsCache = {};
@@ -274,7 +274,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 			var evts = Parser.parseDir(dir, expression);
 
 			$.util.each(evts, function (evt, func) {
-				var depsAlias = Parser.getDepsAlias(expression, fors, 'method');
+				var depsAlias = Parser.getDepsAlias(expression, fors, parser.getVmPre('method'));
 
 				var funcStr = depsAlias.exps.join('.');
 
@@ -330,7 +330,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 					return;
 				}
 
-				var depsAlias = Parser.getDepsAlias(exp, fors);
+				var depsAlias = Parser.getDepsAlias(exp, fors, parser.getVmPre());
 
 				exp = depsAlias.exps.join('.');
 
@@ -365,7 +365,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 			//v-style="json"写法，如：v-style="{'color':tColor, 'font-size':fontSize+'dp'}"
 			$.util.each($style, function (style, exp) {
-				var depsAlias = Parser.getDepsAlias(exp, fors);
+				var depsAlias = Parser.getDepsAlias(exp, fors, parser.getVmPre());
 				updater.updateStyle($node, style, parser.getValue(exp, fors));
 
 				var deps = depsAlias.deps;
@@ -400,7 +400,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 				updater.updateClass($node, cName, parser.getValue(exp, fors));
 
-				var deps = Parser.getDepsAlias(exp, fors).deps;
+				var deps = Parser.getDepsAlias(exp, fors, parser.getVmPre()).deps;
 
 				parser.watcher.watch(deps, function (options) {
 					updater.updateClass($node, cName, parser.getValue(exp, fors));
@@ -416,7 +416,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 			updater.updateShowHide($node, defaultValue, parser.getValue(expression, fors));
 
-			var deps = Parser.getDepsAlias(expression, fors).deps;
+			var deps = Parser.getDepsAlias(expression, fors, parser.getVmPre()).deps;
 
 			parser.watcher.watch(deps, function (options) {
 				updater.updateShowHide($node, defaultValue, parser.getValue(expression, fors));
@@ -466,7 +466,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 				parser.$mutexGroup.append($node);
 			}
 
-			var deps = Parser.getDepsAlias(expression, fors).deps;
+			var deps = Parser.getDepsAlias(expression, fors, parser.getVmPre()).deps;
 
 			parser.watcher.watch(deps, function (options) {
 				$node.def('__isrender', parser.getValue(expression, fors));
@@ -511,7 +511,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 			var parser = this,
 			    updater = this.updater;
 
-			var access = Parser.makeDep(expression, fors);
+			var access = Parser.makeDep(expression, fors, parser.getVmPre());
 
 			// var duplexField = parser.getDuplexField(access), duplex = duplexField.duplex, field = duplexField.field;;
 
@@ -523,7 +523,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 			}, fors);
 
 			Parser.bindTextEvent($node, function () {
-				var access = Parser.makeDep(expression, fors);
+				var access = Parser.makeDep(expression, fors, parser.getVmPre());
 				var duplexField = parser.getDuplexField(access),
 				    duplex = duplexField.duplex(parser.$scope),
 				    field = duplexField.field;
@@ -558,7 +558,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 			Parser.bindChangeEvent($node, function () {
 				if ($node.is(':checked')) {
-					var access = Parser.makeDep(expression, fors);
+					var access = Parser.makeDep(expression, fors, parser.getVmPre());
 					var duplexField = parser.getDuplexField(access),
 					    duplex = duplexField.duplex(parser.$scope),
 					    field = duplexField.field;
@@ -598,7 +598,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 			Parser.bindChangeEvent($node, function () {
 
-				var access = Parser.makeDep(expression, fors);
+				var access = Parser.makeDep(expression, fors, parser.getVmPre());
 				var duplexField = parser.getDuplexField(access),
 				    duplex = duplexField.duplex(parser.$scope),
 				    field = duplexField.field;
@@ -677,7 +677,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 			});
 
 			Parser.bindChangeEvent($node, function () {
-				var access = Parser.makeDep(expression, fors);
+				var access = Parser.makeDep(expression, fors, parser.getVmPre());
 				var duplexField = parser.getDuplexField(access),
 				    duplex = duplexField.duplex(parser.$scope),
 				    field = duplexField.field;
@@ -732,7 +732,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 		},
 		// 隐式监听
 		'vwatch': function vwatch($node, fors, expression, dir) {
-			var depsalias = Parser.getDepsAlias(expression, fors);
+			var depsalias = Parser.getDepsAlias(expression, fors, this.getVmPre());
 			var deps = depsalias.deps;
 			var evtName = dir.split(Parser.dirSplit)[1];
 			this.watcher.watch(deps, function (options) {
@@ -772,10 +772,27 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 		this.initProxy();
 
+		this.initVmPre();
+
 		this.init();
 	};
 
 	var pp = Parser.prototype;
+
+	pp.initVmPre = function () {
+		var model = this.vm.$data;
+		this.vmPre = {
+			data: model.data ? 'data' : '',
+			method: model.methods ? 'methods' : ''
+		};
+	};
+
+	pp.getVmPre = function (type) {
+		type = type || 'data';
+		var vmPre = Parser.getVMPre();
+		var rs = this.vmPre[type] || vmPre[type] || '';
+		return rs;
+	};
 
 	pp.parseForExp = function (expression) {
 		expression = expression.replace(/[ ]+/g, ' ');
@@ -901,7 +918,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 	pp.getValue = function (exp, fors) {
 		var scope = this.$scope;
 		if (arguments.length > 1) {
-			var depsalias = Parser.getDepsAlias(exp, fors);
+			var depsalias = Parser.getDepsAlias(exp, fors, this.getVmPre());
 			exp = depsalias.exps.join('');
 		}
 		var func = this.getAliasFunc(exp, true);
@@ -1064,7 +1081,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 		var alias = Parser.getAlias(fors),
 		    indexAlias = Parser.getIndexAlias(fors),
 		    access = fors.access,
-		    $access = Parser.makeDep(access, fors),
+		    $access = Parser.makeDep(access, fors, this.getVmPre()),
 		    $index = fors.$index,
 		    ignor = fors.ignor;
 		if (ignor) return this.setDeepScope(fors.fors);
@@ -1591,8 +1608,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 		data: '',
 		method: ''
 	};
-	Parser.__addPre = function (exp, type) {
-		var pre = __vmPre && __vmPre[type || 'data'] || '';
+	Parser.__addPre = function (exp, pre) {
+		// var pre = (__vmPre&&__vmPre[type||'data']) || '';
 		return (pre ? pre + '.' : '') + exp;
 	};
 	Parser.setVMPre = function (setting) {
@@ -3458,15 +3475,23 @@ var util = module.exports = {
         }
         return val;
     },
-    disabledAttrForJquery: function disabledAttrForJquery(name, val) {
+    booleanAttrForJquery: function booleanAttrForJquery(name, val) {
         if (arguments.length === 1) {
             var el = this.length > 0 && this[0];
-            return el && el.getAttribute('disabled');
+            if (!el) return '';
+            var rs = this.prop(name);
+            if (typeof rs === 'undefined') {
+                rs = el.getAttribute(name);
+            }
+            if (rs === '' || rs === undefined || rs === null || rs === 'false') {
+                rs = false;
+            }
+            return !!rs;
         } else if (arguments.length === 2) {
-            val = val === 'false' || val === false ? false : true;
             this.each(function () {
-                val ? this.setAttribute('disabled', val) : this.removeAttribute('disabled');
+                this.setAttribute(name, val);
             });
+            return this.prop(name, val);
         }
         return this;
     }
@@ -3648,6 +3673,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   */
 	mp.getData = function () {
 		return this.$data;
+	};
+
+	/**
+  * 获取vm前缀
+  */
+	mp.getVMPre = function (type) {
+		return this.vm.parser.getVmPre(type);
 	};
 
 	module.exports = MVVM;
@@ -5150,7 +5182,7 @@ var BaseComponent = function () {
             }
             var viewData = this.viewData;
             if (!viewData) return;
-            var pre = this.$.vm.getVMPre().data;
+            var pre = this.__getVmPre();
             if (pre) {
                 this.data = viewData[pre] = viewData[pre] || {};
             } else {
@@ -5196,9 +5228,18 @@ var BaseComponent = function () {
                 prop.init ? prop.init() : prop.handler && prop.handler(this.getAttrValue(k));
             }
 
+            // 内部方法挂载
+            this.__wrapperMethod(this.methods);
+
             // 外部方法挂载
-            for (var k in this.methods || {}) {
-                var method = this.methods[k];
+            var viewData = this.viewData || {};
+            this.__wrapperMethod(viewData.methods);
+        }
+    }, {
+        key: '__wrapperMethod',
+        value: function __wrapperMethod(methods) {
+            for (var k in methods || {}) {
+                var method = methods[k];
                 if (typeof method !== 'function') continue;
                 (function (ctx, k) {
                     var oldFunc = ctx[k];
@@ -5262,12 +5303,17 @@ var BaseComponent = function () {
 
             return rs;
         }
+    }, {
+        key: '__getVmPre',
+        value: function __getVmPre() {
+            return this.viewData && this.viewData.data ? 'data' : this.$.vm.getVMPre().data;
+        }
         // 设置data值，基础组件和扩展组件都可调用，对应小程序setData
 
     }, {
         key: 'setData',
         value: function setData(obj) {
-            var pre = this.$.vm.getVMPre().data;
+            var pre = this.__getVmPre();
             var nObj = {};
             if (pre) {
                 nObj[pre] = obj;
@@ -5379,6 +5425,73 @@ BaseComponent.wrapperClass = function (MyClass) {
     }
 
     return Wrapper;
+};
+
+function _structure(options) {
+    var $ = __webpack_require__(0).JQLite;
+    var json = $.extend(true, {}, options);
+    // var methods = json.methods; delete json.methods;
+    var properties = json.properties;delete json.properties;
+    var events = json.events;delete json.events;
+    var props = json.props;delete json.props;
+    var viewData = $.isEmptyObject(json) ? properties ? {} : null : json;
+
+    var json = {
+        // methods: methods,
+        properties: properties,
+        events: events,
+        props: props,
+        viewData: viewData,
+        lifecycle: {}
+    };
+    var lifecycleFuncs = BaseComponent.lifecycleFuncs.slice(0),
+        funcName;
+    while (funcName = lifecycleFuncs.shift()) {
+        _setLifecycleFunc(json, funcName);
+    }
+
+    return json;
+}
+
+function _setLifecycleFunc(json, funcName) {
+    var func = json.viewData && json.viewData[funcName] || json.methods && json.methods[funcName];
+    json.lifecycle[funcName] = func;
+}
+
+BaseComponent.lifecycleFuncs = ['onLoad', 'onShow', 'onHide'];
+
+BaseComponent.createClass = function (options, fullTag) {
+    var json = _structure(options);
+
+    function MyPage(jsDom) {}
+
+    MyPage.prototype = {
+        created: function created() {
+            var $jsDom = this.$jsDom,
+                comp = this;
+
+            $jsDom.on('enter', function () {
+                json.lifecycle.onShow && json.lifecycle.onShow.call(comp);
+            });
+            $jsDom.on('leave', function () {
+                json.lifecycle.onHide && json.lifecycle.onHide.call(comp);
+            });
+            json.lifecycle.onLoad && json.lifecycle.onLoad.call(comp);
+        },
+        initViewData: function initViewData() {
+            if (json.viewData) this.viewData = json.viewData;
+        },
+        initProto: function initProto() {
+            // if(json.methods) this.methods = json.methods;
+            if (json.properties) this.properties = json.properties;
+            if (json.props) this.props = json.props;
+            if (json.events) this.events = json.events;
+        }
+    };
+
+    if (fullTag) MyPage.fullTag = fullTag;
+
+    return MyPage;
 };
 
 module.exports = BaseComponent;

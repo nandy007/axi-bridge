@@ -14,9 +14,9 @@ $.vm.addEventFilter({
     }
 });
 
-$.vm.setVMPre({
-    data: 'data'
-});
+// $.vm.setVMPre({
+//     data: 'data'
+// });
 
 // 简单实现tap事件
 function hackTapEvent(){
@@ -115,6 +115,8 @@ module.exports = {
 
             hackTapEvent();
         });
+
+        return MyClass;
         
     }
-}
+};

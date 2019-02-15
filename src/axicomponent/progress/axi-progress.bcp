@@ -195,7 +195,7 @@
             <box id="progressArea">
                 <box id="progressActive"></box>
             </box>
-            <box id="progressText"><text id="processPercent">1111</text></box>
+            <box id="progressText"><text id="processPercent"></text></box>
         </box>
     </ui>
 </page>

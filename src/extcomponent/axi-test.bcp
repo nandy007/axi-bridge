@@ -9,34 +9,45 @@
         require('../axicomponent/view/axi-view.bcp');
         var console = require('Console');
 
-        var Component = require('../axicomponent/util.js').Component;
+        var Component = require('../axicomponent/include.js')(module, 'axi-test').Component;
 
-        function MyView(){
+        // var Component = require('../axicomponent/util.js').Component;
+
+        // function MyView(){
             
-        }
+        // }
 
-        MyView.prototype = {
-            created: function(){
+        // MyView.prototype = {
+        //     created: function(){
                 
-            },
-            initViewData: function(){
-                this.viewData = {};
-            },
-            initProto: function(){
-                this.viewData = {
+        //     },
+        //     initViewData: function(){
+        //         this.viewData = {};
+        //     },
+        //     initProto: function(){
+        //         this.viewData = {
 
-                };
-                this.properties = {
-                    'list': {
-                        type: Object,
-                        value: []
-                    }
-                };
-            }
-        };
+        //         };
+        //         this.properties = {
+        //             'list': {
+        //                 type: Object,
+        //                 value: []
+        //             }
+        //         };
+        //     }
+        // };
 
         
-        module.exports = Component(MyView);
+        // module.exports = Component(MyView);
+
+        Component({
+            properties: {
+                'list': {
+                    type: Object,
+                    value: []
+                }
+            }
+        });
 
     ]]>
     </script>
