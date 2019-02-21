@@ -26,7 +26,7 @@
                     'direction': {
                         // memo: 'bridge滚动方向',
                         type: String,
-                        value: 'horizontal'
+                        value: 'vertical'
                     },
                     'scrollX': {
                         // memo: 'x滚动方向',
