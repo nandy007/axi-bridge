@@ -23,7 +23,7 @@
 
                 function createDotData(active){
                     return {
-                        bgColor: active ? comp.getAttrValue('indicator-active-color') : comp.getAttrValue('indicator-color')
+                        bgColor: active ? comp.getAttrValue('indicatorActiveColor') : comp.getAttrValue('indicatorColor')
                     };
                 }
 
@@ -36,7 +36,7 @@
                 }
 
                 function changeDots(index){
-                    var activeColor = comp.getAttrValue('indicator-active-color'), color = comp.getAttrValue('indicator-color');
+                    var activeColor = comp.getAttrValue('indicatorActiveColor'), color = comp.getAttrValue('indicatorColor');
                     for(var i=0, len=dotsData.data.list.length;i<len;i++){
                         if(i===index){
                             dotsData.data.list[i].bgColor = activeColor;
@@ -102,7 +102,7 @@
                             }
                         }
                     },
-                    'current-item-id': {
+                    'currentItemId': {
                         // memo: '当前所在滑块的 item-id ，不能与 current 被同时指定',
                         type: String,
                         value: 0,
@@ -121,12 +121,12 @@
                             changeDots(val);
                         },
                         init: function(){
-                            if(jsDom.hasAttr('current-item-id')){
-                                this.handler(comp.getAttrValue('current-item-id'));
+                            if(jsDom.hasAttr('currentItemId')){
+                                this.handler(comp.getAttrValue('currentItemId'));
                             }
                         }
                     },
-                    'indicator-dots': {
+                    'indicatorDots': {
                         // memo: '是否显示面板指示点',
                         type: Boolean,
                         value: false,
@@ -143,12 +143,12 @@
                             }
                         }
                     },
-                    'indicator-color': {
+                    'indicatorColor': {
                         // memo: '指示点颜色',
                         type: String,
                         value: 'rgba(0, 0, 0, .3)'
                     },
-                    'indicator-active-color': {
+                    'indicatorActiveColor': {
                         // memo: '当前选中的指示点颜色',
                         type: String,
                         value: '#000000'

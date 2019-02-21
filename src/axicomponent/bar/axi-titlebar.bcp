@@ -49,14 +49,14 @@
                             $icon.css('font-size', val*2);
                         }
                     },
-                    'hide-left-side': {
+                    'hideLeftSide': {
                         // memo: '隐藏左边区域',
                         type: Boolean,
                         handler: function(val){
                             $icon[val?'hide':'show']();
                         },
                         init: function(){
-                            if($jsDom.hasAttr('hide-left-side')) this.handler(comp.getAttrValue('hide-left-side'));
+                            if($jsDom.hasAttr('hideLeftSide')) this.handler(comp.getAttrValue('hideLeftSide'));
                         }
                     }
                 };

@@ -110,39 +110,39 @@
                             // });
                         }
                     },
-                    'hover-class': {
+                    'hoverClass': {
                         // memo: '指定按下去的样式类。当 hover-class="none" 时，没有点击态效果',
                         type: String,
                         handler: function(val){
                             // 透传view组件属性
-                            $button.attr('hover-class', val || 'private-axi-button-hover');
+                            $button.attr('hoverClass', val || 'private-axi-button-hover');
                         }
                     },
-                    'hover-stop-propagation': {
+                    'hoverStopPropagation': {
                         // memo: '指定是否阻止本节点的祖先节点出现点击态',
                         type: Boolean,
                         value: false,
                         handler: function(val){
                             // 透传view组件属性
-                            $button.attr('hover-stop-propagation', val);
+                            $button.attr('hoverStopPropagation', val);
                         }
                     },
-                    'hover-start-time': {
+                    'hoverStartTime': {
                         // memo: '按住后多久出现点击态，单位毫秒',
                         type: Number,
                         value: 50,
                         handler: function(val){
                             // 透传view组件属性
-                            $button.attr('hover-start-time', val);
+                            $button.attr('hoverStartTime', val);
                         }
                     },
-                    'hover-stay-time': {
+                    'hoverStayTime': {
                         // memo: '手指松开后点击态保留时间，单位毫秒',
                         type: Number,
                         value: 400,
                         handler: function(val){
                             // 透传view组件属性
-                            $button.attr('hover-stay-time', val);
+                            $button.attr('hoverStayTime', val);
                         }
                     }
                 };

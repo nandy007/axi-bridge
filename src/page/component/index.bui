@@ -284,7 +284,7 @@
     </style>
     <ui>
         <axi-view id="root" class="rootBox">
-            <axi-titlebar hide-left-side="true" title="首页" style="border-bottom-width:1;border-bottom-color:#ececec;"></axi-titlebar>
+            <axi-titlebar hideLeftSide="true" title="首页" style="border-bottom-width:1;border-bottom-color:#ececec;"></axi-titlebar>
             <axi-view style="flex:1;padding:4 4 4 4;">
             <axi-scroll-view v-on:scroll="method.scroll" v-on:scrolltoupper="method.upper" v-on:scrolltolower="method.lower">
                 <axi-text v-bind:text="title"></axi-text>
@@ -298,7 +298,7 @@
 
                 <axi-test v-bind:list="list" memo="测试对象属性"></axi-test>
 
-                <axi-button id="ttt" data-aaa-bbb="ccc" type="warn" disabled="false" hover-class="hoverclass" loading="true" v-on:click="method.click"><text>这是一个button</text></axi-button>
+                <axi-button id="ttt" data-aaa-bbb="ccc" type="warn" disabled="false" hoverClass="hoverclass" loading="true" v-on:click="method.click"><text>这是一个button</text></axi-button>
                 <axi-view style="padding: 10 0 10 0;flex-direction:column;">
 
                     <axi-view style="flex-direction:row;">
@@ -330,9 +330,9 @@
                         </axi-label>
                     </axi-radio-group>
 
-                    <axi-input v-bind:focus="inputFocus" disabled="false" maxlength="-1" placeholder-color="blue" type="text" password="true" v-on:input="method.input" v-on:focus="method.focus" placeholder="请输入文本"></axi-input>
+                    <axi-input v-bind:focus="inputFocus" disabled="false" maxlength="-1" placeholderColor="blue" type="text" password="true" v-on:input="method.input" v-on:focus="method.focus" placeholder="请输入文本"></axi-input>
                     <axi-text v-text="'有多少行数据？答：'+line"></axi-text>
-                    <axi-textarea v-on:linechange="method.linechange" auto-height="true" maxlength="-1" placeholder="请输入文本"></axi-textarea>
+                    <axi-textarea v-on:linechange="method.linechange" autoHeight="true" maxlength="-1" placeholder="请输入文本"></axi-textarea>
 
                     <axi-select placeholder="请选择" value="2" options="[{text:'内容1', value:'1'},{text:'内容2', value:'2'}]" disabled="false"></axi-select>
 
@@ -359,17 +359,17 @@
                     <axi-icon type="search"></axi-icon>
                 </axi-view>
                 <axi-view style="flex-direction:row;">
-                    <axi-progress percent="40" active="true" active-mode="forwards" border-radius="5" stroke-width="10" style="margin-right:20;"></axi-progress>
+                    <axi-progress percent="40" active="true" activeMode="forwards" borderRadius="5" strokeWidth="10" style="margin-right:20;"></axi-progress>
                     <axi-icon type="cancel"></axi-icon>
                 </axi-view>
-                <axi-progress v-bind:percent="percent" active="true" active-mode="forwards" font-size="14" activeColor="#10aeff" show-info="true"></axi-progress>
+                <axi-progress v-bind:percent="percent" active="true" activeMode="forwards" fontSize="14" activeColor="#10aeff" showInfo="true"></axi-progress>
                 
-                <axi-swiper style="height: 200;" current="1" indicator-dots="true" v-on:change="method.swiperChange">
+                <axi-swiper style="height: 200;" current="1" indicatorDots="true" v-on:change="method.swiperChange">
                     <axi-swiper-item v-for="pic in pics" mode="single" style="background-color:red;">
                         <image v-bind:src="pic.src" style="flex:1;" />
                     </axi-swiper-item>
                 </axi-swiper>
-                <axi-view v-for="item in list" v-bind:data-index="$index" class="myview" hover-class="hoverclass" v-on:touchDown="method.doTouchDown" data-aaa="111"><text v-bind:data-bbb="item.title">{{item.title}}</text></axi-view>
+                <axi-view v-for="item in list" v-bind:data-index="$index" class="myview" hoverClass="hoverclass" v-on:touchDown="method.doTouchDown" data-aaa="111"><text v-bind:data-bbb="item.title">{{item.title}}</text></axi-view>
                 <box id="aaa"><text>dasdasdas</text></box>
             </axi-scroll-view>
             </axi-view>

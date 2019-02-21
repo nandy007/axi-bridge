@@ -24,14 +24,14 @@
                 var jsDom = this.jsDom, comp = this;
 
                 this.props = {
-                    'hover-class': {
+                    'hoverClass': {
                         // memo: '指定按下去的样式类。当 hover-class="none" 时，没有点击态效果',
                         type: String,
                         handler: function(val){
                             comp.hoverClass = val || '';
                         }
                     },
-                    'hover-stop-propagation': {
+                    'hoverStopPropagation': {
                         // memo: '指定是否阻止本节点的祖先节点出现点击态',
                         type: Boolean,
                         value: false,
@@ -39,7 +39,7 @@
                             comp.hoverStopPropagation = val;
                         }
                     },
-                    'hover-start-time': {
+                    'hoverStartTime': {
                         // memo: '按住后多久出现点击态，单位毫秒',
                         type: Number,
                         value: 50,
@@ -47,7 +47,7 @@
                             comp.hoverStartTime = val;
                         }
                     },
-                    'hover-stay-time': {
+                    'hoverStayTime': {
                         // memo: '手指松开后点击态保留时间，单位毫秒',
                         type: Number,
                         value: 400,

@@ -44,17 +44,13 @@
                             $inputDom.attr('prompt', val);
                         }
                     },
-                    'placeholder-color': {
+                    'placeholderColor': {
                         // memo: '输入框为空时占位符文字颜色，自定义独有',
                         type: String,
                         value: '#aaaaaa',
                         handler: function(val){
                             $inputDom.css('prompt-color', val);
-                        },
-                        // init: function(){
-                        //     if(!$jsDom.hasAttr('placeholder-color')) return;
-                        //     this.handler(comp.getAttrValue('placeholder-color'));
-                        // }
+                        }
                     },
                     'disabled': {
                         // memo: '是否禁用',
@@ -75,7 +71,7 @@
                             }
                         }
                     },
-                    'auto-height': {
+                    'autoHeight': {
                         // memo: '是否自动增高，设置auto-height时，style.height不生效',
                         type: Boolean,
                         value: false,
@@ -89,8 +85,8 @@
                             return size;
                         },
                         eventRegister: function(){
-                            var size = props['auto-height'].measureTextsize(inputDom);
-                            var height = props['auto-height'].getSize($inputDom.css('height'));
+                            var size = props['autoHeight'].measureTextsize(inputDom);
+                            var height = props['autoHeight'].getSize($inputDom.css('height'));
                             var newHeight =  Math.max(size.height, 30);
                             if(height===newHeight) return;
                             time.setTimeout(() => {

@@ -28,7 +28,7 @@
                         type: String,
                         value: 'horizontal'
                     },
-                    'scroll-x': {
+                    'scrollX': {
                         // memo: 'x滚动方向',
                         type: Boolean,
                         value: false,
@@ -38,7 +38,7 @@
                             }
                         }
                     },
-                    'scroll-y': {
+                    'scrollY': {
                         // memo: 'y滚动方向',
                         type: Boolean,
                         value: true,
@@ -48,7 +48,7 @@
                             }
                         }
                     },
-                    'upper-threshold': {
+                    'upperThreshold': {
                         // memo: '距顶部多远时，触发 scrolltoupper 事件',
                         type: Number,
                         value: 50,
@@ -56,7 +56,7 @@
                             comp.upperThreshold = val;
                         }
                     },
-                    'lower-threshold': {
+                    'lowerThreshold': {
                         // memo: '距底部多远时，触发 scrolltolower 事件',
                         type: Number,
                         value: 50,
@@ -64,7 +64,7 @@
                             $el.attr('bottomDistance', val);
                         }
                     },
-                    'enable-back-to-top': {
+                    'enableBackToTop': {
                         // memo: '点击系统状态栏是否滚动至顶部',
                         refer: 'scrollToTop',
                         type: Boolean,
@@ -73,12 +73,12 @@
                             $el.attr('scrollToTop', v);
                         }
                     },
-                    'scroll-with-animation': {
+                    'scrollWithAnimation': {
                         // memo: '在设置滚动条位置时使用动画过渡',
                         type: Boolean,
                         value: false
                     },
-                    'scroll-into-view': {
+                    'scrollIntoView': {
                         // memo: '值应为某子元素id（id不能以数字开头）。设置哪个方向可滚动，则在哪个方向滚动到该元素',
                         type: String,
                         handler: function(val){

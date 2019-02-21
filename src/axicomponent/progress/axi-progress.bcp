@@ -43,7 +43,7 @@
                 var $processPercent = this.$processPercent = $progressText.find('#processPercent');
 
                 var props = this.props = {
-                    'show-info': {
+                    'showInfo': {
                         // memo: '在进度条右侧显示百分比',
                         type: Boolean,
                         value: false,
@@ -51,7 +51,7 @@
                             $progressText[val?'show':'hide']();
                         }
                     },
-                    'border-radius': {
+                    'borderRadius': {
                         // memo: '圆角大小，单位px（2.4.0起支持rpx）',
                         type: Number,
                         value: 0,
@@ -59,7 +59,7 @@
                             $progressArea.css('border-radius', val);
                         }
                     },
-                    'font-size': {
+                    'fontSize': {
                         // memo: '右侧百分比字体大小，单位px（2.4.0起支持rpx）',
                         type: Number,
                         value: 16,
@@ -68,7 +68,7 @@
                             $progressText.css('width', val*3);
                         }
                     },
-                    'stroke-width': {
+                    'strokeWidth': {
                         // memo: '进度条线的宽度，单位px（2.4.0起支持rpx）',
                         type: Number,
                         value: 6,
@@ -97,7 +97,7 @@
                         type: Boolean,
                         value: false
                     },
-                    'active-mode': {
+                    'activeMode': {
                         // memo: 'backwards: 动画从头播；forwards：动画从上次结束点接着播',
                         type: String,
                         value: 'backwards'
@@ -131,7 +131,7 @@
                             }
                         },
                         handler: function(val){
-                            var active = comp.getAttrValue('active'), activeMode = comp.getAttrValue('active-mode');
+                            var active = comp.getAttrValue('active'), activeMode = comp.getAttrValue('activeMode');
                             var oldVal = this.lastValue;
                             var range = val - this.lastValue;
                             if(!active){
