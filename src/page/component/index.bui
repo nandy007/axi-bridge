@@ -2,6 +2,7 @@
     <script>
         <![CDATA[
             require('../../extcomponent/axi-test.bcp');
+            require('../../extcomponent/axi-ext-view.bcp');
             require('../../axicomponent/view/axi-view.bcp');
             require('../../axicomponent/scroll-view/axi-scroll-view.bcp');
             require('../../axicomponent/swiper/axi-swiper.bcp');
@@ -150,12 +151,16 @@
             Page({
                 onLoad: function(){
                     var comp = this;
-                    
+                    // this.data.title = '2222';
                     // var viewData = this.viewData;
                     this.data.pics.push({ src: 'res:common/resources/pic/1.jpg' });
+                    
                     this.data.list.push({ title: '这是标题3' });
-                    // viewData.data.title = '2222';
+                    
                     var $ = this.$, $jsDom = $(this.jsDom);
+
+                    // console.log(this.data.pics.length);
+
                     // $('axi-scroll-view').hide();
                     time.setTimeout(function() {
                         // $('axi-scroll-view').attr('scroll-into-view', "aaa");
@@ -165,9 +170,9 @@
                         // console.log($('axi-scroll-view').css('display'))
                         
                         comp.data.list.push({title:'这是标题4'})
-                        // comp.setData({
-                        //     list: comp.data.list
-                        // });
+                        comp.setData({
+                            list: comp.data.list
+                        });
 
                         // viewData.data.inputFocus = true;
                         comp.data.tabIndex = 0;
@@ -253,6 +258,7 @@
     </script>
     <style>
         .rootBox {
+            display: flex;
             width: 100%;
             height: 100%;
         }
@@ -366,15 +372,25 @@
                 
                 <axi-swiper style="height: 200;" current="1" indicatorDots="true" v-on:change="method.swiperChange">
                     <axi-swiper-item v-for="pic in pics" mode="single" style="background-color:red;">
-                        <image v-bind:src="pic.src" style="flex:1;" />
+                        <axi-image mode="scaleToFill" v-bind:src="pic.src" style="flex:1;" />
                     </axi-swiper-item>
                 </axi-swiper>
                 <axi-view v-for="item in list" v-bind:data-index="$index" class="myview" hoverClass="hoverclass" v-on:touchDown="method.doTouchDown" data-aaa="111"><text v-bind:data-bbb="item.title">{{item.title}}</text></axi-view>
                 <box id="aaa"><text>dasdasdas</text></box>
+                <axi-ext-view>
+                    <text style="color:red;" v-for="item in list">{{item.title}}</text>
+                </axi-ext-view>
             </axi-scroll-view>
             </axi-view>
             <axi-tabbar v-bind:list="tablist" v-bind:current="tabIndex" v-on:changed="method.tabChange"></axi-tabbar>
         </axi-view>
+        <!-- <axi-view id="root" class="rootBox">
+            <axi-text v-bind:text="title"></axi-text>
+                    <axi-swiper-item v-for="pic in pics" mode="single" style="background-color:red;">
+                        <axi-image mode="scaleToFill" v-bind:src="pic.src" style="flex:1;" />
+                    </axi-swiper-item>
+                
 
+        </axi-view> -->
     </ui>
 </page>

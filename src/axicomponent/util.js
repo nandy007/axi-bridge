@@ -12,11 +12,20 @@ $.vm.addEventFilter({
         if(!e.detail) e.detail = param || {};
         return this.getComponent();
     }
-});
+}, 'before');
 
-// $.vm.setVMPre({
-//     data: 'data'
-// });
+$.vm.addEventFilter({
+    'default': function(rs, isCatch, el, e, param){
+        if(isCatch) return false;
+        var parent = el.getParent(), args = $.util.copyArray(arguments), params = args.slice(4);
+        parent && parent.fire(e.type, params);
+    }
+}, 'after');
+
+$.vm.setVMPre({
+    data: '',
+    method: ''
+});
 
 // 简单实现tap事件
 function hackTapEvent(){

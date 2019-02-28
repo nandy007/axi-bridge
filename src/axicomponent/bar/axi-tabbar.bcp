@@ -68,7 +68,7 @@
                     'borderStyle': {
                         // memo: '边框颜色',
                         type: String,
-                        value: '#000000'
+                        value: '#ececec'
                     },
                     'backgroundColor': {
                         // memo: '背景颜色',

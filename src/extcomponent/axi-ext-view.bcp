@@ -1,0 +1,92 @@
+<page>
+    <module>
+        <![CDATA[
+    
+        ]]>
+    </module>
+    <script>
+        <![CDATA[
+        require('../axicomponent/view/axi-view.bcp');
+        var console = require('Console');
+
+        var Component = require('../axicomponent/include.js')(module, 'axi-test').Component;
+
+        // var Component = require('../axicomponent/util.js').Component;
+
+        // function MyView(){
+            
+        // }
+
+        // MyView.prototype = {
+        //     created: function(){
+                
+        //     },
+        //     initViewData: function(){
+        //         this.viewData = {};
+        //     },
+        //     initProto: function(){
+        //         this.viewData = {
+
+        //         };
+        //         this.properties = {
+        //             'list': {
+        //                 type: Object,
+        //                 value: []
+        //             }
+        //         };
+        //     }
+        // };
+
+        
+        // module.exports = Component(MyView);
+
+        Component({
+            onLoad: function(){
+                // require('Console').log(this.$jsDom[0].slotParent)
+            },
+            properties: {
+                'hoverClass': {
+                    type: String,
+                    value: 'none',
+                    // observer: function (newVal, oldVal) {
+                        
+                    // }
+                },
+                'hoverStopPropagation': {
+                    type: Boolean,
+                    value: false
+                },
+                'hoverStartTime': {
+                    type: Number,
+                    value: 50
+                },
+                'hoverStayTime': {
+                    type: Number,
+                    value: 400
+                }
+            },
+            data: {
+                list: [
+                    {
+                        title: '标题一'
+                    },
+                    {
+                        title: '标题二'
+                    }
+                ],
+                aaa: 111
+            }
+        });
+
+    ]]>
+    </script>
+    <style>
+
+    </style>
+    <ui>
+        <axi-view class="slot-class">
+            <text id="aaa" v-for="item in list">{{item.title}}</text>
+            <box id="ext"><slot></slot></box>
+        </axi-view>
+    </ui>
+</page>

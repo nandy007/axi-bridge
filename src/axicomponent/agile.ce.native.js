@@ -1,6 +1,6 @@
 /*
  *	Agile CE 移动前端MVVM框架
- *	Version	:	0.4.61.1550753187546 beta
+ *	Version	:	0.4.62.1551336556973 beta
  *	Author	:	nandy007
  *	License MIT @ https://github.com/nandy007/agile-ce
  */var __ACE__ = {};
@@ -267,11 +267,14 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 				__modelInit && __modelInit();
 			});
 		},
-		'von': function von($node, fors, expression, dir, isOnce) {
+		'von': function von($node, fors, expression, dir, opts) {
 			var parser = this;
 			var vm = this.vm,
 			    scope = this.$scope;
 			var evts = Parser.parseDir(dir, expression);
+			opts = opts || {};
+			var isOnce = opts.isOnce,
+			    isCatch = opts.isCatch;
 
 			$.util.each(evts, function (evt, func) {
 				var depsAlias = Parser.getDepsAlias(expression, fors, parser.getVmPre('method'));
@@ -298,9 +301,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 						var func = new Function('scope', 'node', '$event', 'params', 'params.unshift(' + argsStr + '); return ' + funcStr + '.apply(node, params);');
 						rs = func(scope, me, params.shift(), params);
 					}
-					var afterHandler = this['__after' + evt.toLowerCase()];
-					afterHandler && afterHandler(rs);
-					return rs;
+					var afterHandler = Parser.getEventFilter(this, evt, 'after');
+					return afterHandler ? afterHandler.apply(parser.vm.$element, [rs, isCatch, this].concat(_toConsumableArray(params))) : rs;
 				};
 
 				$node.each(function () {
@@ -314,7 +316,16 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 		},
 		'vone': function vone($node, fors, expression, dir) {
 			var args = $.util.copyArray(arguments);
-			args.push(true);
+			args.push({
+				isOnce: true
+			});
+			this.von.apply(this, args);
+		},
+		'vcatch': function vcatch($node, fors, expression, dir) {
+			var args = $.util.copyArray(arguments);
+			args.push({
+				isCatch: true
+			});
 			this.von.apply(this, args);
 		},
 		'vbind': function vbind($node, fors, expression, dir) {
@@ -326,8 +337,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 			$.util.each(attrs, function (attr, exp) {
 				exp = $.util.trim(exp);
 				if (attr === 'class' || attr === 'style') {
-					var rsType = parser['v' + attr]($node, fors, exp);
-					if (!rsType) return;
+					parser['v' + attr]($node, fors, exp);
+					return;
 				}
 
 				var depsAlias = Parser.getDepsAlias(exp, fors, parser.getVmPre());
@@ -353,14 +364,33 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 			//v-style="string"写法，如：v-style="imgStyle"
 			if ($.util.isString($style)) {
 
-				// var styles = Parser.formatJData(parser.getValue($style, fors)),
-				// 	access = Parser.makePath($style, fors);
+				var styles = Parser.formatJData(parser.getValue($style, fors));
+				// access = Parser.makePath($style, fors);
 
-				// updater.updateStyle($node, styles);
+				updater.updateStyle($node, styles);
 
 				// parser.doWatch($node, access, styles, 'updateStyle', $style, fors);
 
-				return true;
+				var exp = $.util.trim(expression);
+				var depsAlias = Parser.getDepsAlias(exp, fors, parser.getVmPre());
+
+				var deps = depsAlias.deps;
+
+				parser.watcher.watch(deps, function (options) {
+					var newStyles = Parser.formatJData(parser.getValue($style, fors));
+					// updater.updateAttribute($node, attr, parser.getValue(exp, fors));
+					$.util.each(styles, function (k, v) {
+						$node.css(k, '');
+					});
+
+					styles = newStyles;
+
+					updater.updateStyle($node, newStyles);
+				}, fors);
+
+				// parser.doWatch($node, access, styles, 'updateStyle', $style, fors);
+
+				return;
 			}
 
 			//v-style="json"写法，如：v-style="{'color':tColor, 'font-size':fontSize+'dp'}"
@@ -384,15 +414,33 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 			//v-class="string"写法，如：v-class="testClass"
 			if ($.util.isString($class)) {
 
-				// var oldClass = Parser.formatJData(parser.getValue($class, fors));
+				var oldClass = Parser.formatJData(parser.getValue($class, fors));
 
 				// var access = Parser.makePath($class, fors);
 
-				// updater.updateClass($node, oldClass);
+				updater.updateClass($node, oldClass);
+
+				// parser.doWatch($node, access, oldClass, 'updateClass', $class, fors);
+				var exp = $.util.trim(expression);
+				var depsAlias = Parser.getDepsAlias(exp, fors, parser.getVmPre());
+
+				var deps = depsAlias.deps;
+
+				parser.watcher.watch(deps, function (options) {
+					var newClass = Parser.formatJData(parser.getValue($class, fors));
+					// updater.updateAttribute($node, attr, parser.getValue(exp, fors));
+					$.util.each(oldClass, function (k, v) {
+						$node.removeClass(k);
+					});
+
+					oldClass = newClass;
+
+					updater.updateClass($node, newClass);
+				}, fors);
 
 				// parser.doWatch($node, access, oldClass, 'updateClass', $class, fors);
 
-				return true;
+				return;
 			}
 
 			//v-class="json"写法，如：v-class="{colorred:cls.colorRed, colorgreen:cls.colorGreen, font30:cls.font30, font60:cls.font60}"
@@ -780,6 +828,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 	var pp = Parser.prototype;
 
 	pp.initVmPre = function () {
+		if (!Parser.hasVMPre()) return;
 		var model = this.vm.$data;
 		this.vmPre = {
 			data: model.data ? 'data' : '',
@@ -788,6 +837,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 	};
 
 	pp.getVmPre = function (type) {
+		if (!Parser.hasVMPre()) return '';
 		type = type || 'data';
 		var vmPre = Parser.getVMPre();
 		var rs = this.vmPre[type] || vmPre[type] || '';
@@ -1588,26 +1638,34 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 	Parser.dirSplit = ':';
 
 	var __eventFilter = {
-		default: null
-	};
-	Parser.addEventFilter = function (filters) {
-		for (var k in filters) {
-			__eventFilter[k] = filters[k];
+		before: {
+			default: null
+		},
+		after: {
+			default: null
 		}
 	};
-	Parser.getEventFilter = function (el, evtName) {
+	Parser.addEventFilter = function (filters, type) {
+		type = type || 'before';
+		for (var k in filters) {
+			__eventFilter[type][k] = filters[k];
+		}
+	};
+	Parser.getEventFilter = function (el, evtName, type) {
 		if (!el) return null;
 		evtName = evtName.toLowerCase();
-		if (el['__before' + evtName]) return el['__before' + evtName];
-		if (__eventFilter[evtName]) return __eventFilter[evtName];
-		if (__eventFilter['default']) return __eventFilter['default'];
+		type = type || 'before';
+		if (el['__' + type + evtName]) return el['__' + type + evtName];
+		if (__eventFilter[type][evtName]) return __eventFilter[type][evtName];
+		if (__eventFilter[type]['default']) return __eventFilter[type]['default'];
 		return null;
 	};
 
-	var __vmPre = {
-		data: '',
-		method: ''
-	};
+	// var __vmPre = {
+	// 	data: '',
+	// 	method: ''
+	// };
+	var __vmPre;
 	Parser.__addPre = function (exp, pre) {
 		// var pre = (__vmPre&&__vmPre[type||'data']) || '';
 		return (pre ? pre + '.' : '') + exp;
@@ -1615,8 +1673,11 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 	Parser.setVMPre = function (setting) {
 		__vmPre = setting;
 	};
-	Parser.getVMPre = function (setting) {
+	Parser.getVMPre = function () {
 		return __vmPre || {};
+	};
+	Parser.hasVMPre = function () {
+		return !!__vmPre;
 	};
 
 	module.exports = Parser;
@@ -2075,10 +2136,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					} else if (typeof el[name] === 'function') {
 						ret = el[name]();
 					} else {
-						ret = el.getAttr(name);
+						ret = el.getAttr && el.getAttr(name);
 					}
 				} catch (e) {
-					$.util.error(e);
+					jqlite.util.error(e);
 				}
 
 				return ret || '';
@@ -3568,13 +3629,29 @@ module.exports = require("File");
 "use strict";
 
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 module.exports = function (jqlite) {
 	jqlite.JSON = {
-		parse: function parse(str) {
-			return JSON.parse(str) || {};
+		stringify: function stringify(json) {
+			try {
+				return (typeof json === 'undefined' ? 'undefined' : _typeof(json)) === 'object' ? JSON.stringify(json) : json;
+			} catch (e) {
+				console.error('json数据转换字符串失败：' + String(json));
+			}
+			return json;
 		},
-		stringify: function stringify(str) {
-			return JSON.stringify(str) || '';
+		parse: function parse(val) {
+			try {
+				return JSON.parse(val);
+			} catch (e) {
+				val = new Function('return ' + val + ';')();
+				if ((typeof val === 'undefined' ? 'undefined' : _typeof(val)) !== 'object') {
+					console.error('json字符串转换对象失败：' + String(val));
+					return null;
+				};
+			}
+			return val;
 		}
 	};
 
@@ -3588,9 +3665,9 @@ module.exports = function (jqlite) {
 		Parser.add(rules);
 	};
 
-	jqlite.vm.addEventFilter = function (filters) {
+	jqlite.vm.addEventFilter = function (filters, type) {
 		var Parser = __webpack_require__(1);
-		Parser.addEventFilter(filters);
+		Parser.addEventFilter(filters, type);
 	};
 
 	jqlite.vm.setVMPre = function (setting) {
@@ -3757,6 +3834,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		isTheDirective: function isTheDirective(type, dir) {
 			//是否为指定指令
 			return dir === type;
+		},
+		getSlotParent: function getSlotParent(el) {
+			var soltParent = el.soltParent;
+			if (soltParent && soltParent.soltParent) {
+				return this.getSlotParent(soltParent);
+			}
+			return soltParent;
 		}
 	};
 
@@ -3769,7 +3853,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		var compiler = this;
 
-		var $element = $(element);
+		var $element = $(element),
+		    element = $element[0];
 
 		// $element.on('DOMNodeRemoved', function(){
 		// 	compiler.destroy();
@@ -3785,6 +3870,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		//缓存根节点
 		this.$element = $element;
+		this.slotParent = element.isComponent ? element.slotParent : null;
 
 		//数据模型对象
 		this.$data = model;
@@ -3839,8 +3925,25 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			if ($node.hasAttr('vmignore')) return;
 
-			var ignoreRoot = $node.hasAttr('vmignoreroot'),
-			    isRoot = _this.root === this;
+			var isRoot = _this.root === this;
+
+			if (!isRoot && this.isSlotParent) return;
+
+			if (this.isComponent && !isRoot) {
+				//缓存指令节点
+				if (compileUtil.hasDirective($node)) {
+					directiveNodes.push({
+						el: $node,
+						fors: fors
+					});
+				}
+				if (compileUtil.isInPre($node)) return;
+				//对slot子节点递归调用
+				_this.walkElement($(this.slotParent).childs(), fors, directiveNodes);
+				return;
+			}
+
+			var ignoreRoot = $node.hasAttr('vmignoreroot');
 
 			if (!ignoreRoot || ignoreRoot && !isRoot) {
 				//缓存指令节点
@@ -5183,6 +5286,8 @@ var BaseComponent = function () {
             var jsDom = this.jsDom,
                 $ = __webpack_require__(0).JQLite;
             jsDom.component = this;
+            jsDom.isComponent = true;
+            if (jsDom.slotParent) jsDom.slotParent.isSlotParent = true;
             this.$ = $;
             this.$jsDom = $(jsDom);
             var root = jsDom.getRootElement && jsDom.getRootElement();
@@ -5240,11 +5345,11 @@ var BaseComponent = function () {
                     handler: function handler(val) {
                         var $slot = comp.getSlotWrapper && comp.getSlotWrapper();
                         if (this.lastVal) {
-                            $jsDom.removeClass(this.lastVal);
+                            // $jsDom.removeClass(this.lastVal);
                             $slot && $slot.removeClass(this.lastVal);
                         }
                         if (val) {
-                            $jsDom.addClass(val);
+                            // $jsDom.addClass(val);
                             $slot && $slot.addClass(val);
                         }
                         this.lastVal = val;
@@ -5320,7 +5425,8 @@ var BaseComponent = function () {
 
             if (!this.viewData) return;
 
-            this.$root.attr('vmignoreroot', 'true').on('__destroy__', function () {
+            this.$root //.attr('vmignoreroot', 'true')
+            .on('__destroy__', function () {
                 _this2.$vm.destroy();
             });
             this.$vm = this.$root.render(this.viewData);
