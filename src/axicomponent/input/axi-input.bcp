@@ -174,7 +174,7 @@
                                 e.detail = {
                                     value: $inputDom.val()
                                 }
-                                return this.getComponent();;
+                                return this.getComponent();
                             }
                         }
                     },
