@@ -15,6 +15,9 @@ module.exports = function(mod, fullTag){
         },
         Component: function(options){
             var MyComponent = BaseComponent.createClass(options, fullTag);
+            MyComponent.prototype.getSlotWrapper = function(){
+                return $(this.$jsDom[0].slotParent);
+            };
             mod.exports = Component(MyComponent);
         }
     };
