@@ -294,7 +294,7 @@
             <axi-view style="flex:1;padding:4 4 4 4;">
             <axi-scroll-view v-on:scroll="method.scroll" v-on:scrolltoupper="method.upper" v-on:scrolltolower="method.lower">
                 <axi-text v-bind:text="title"></axi-text>
-                <axi-text v-on:tap="method.tap" v-html="html" selectable="true" space="nbsp"></axi-text>
+                <axi-text v-on:tap="method.tap" v-bind:html="html" selectable="true" space="nbsp"></axi-text>
 
                 <axi-image src="https://www.baidu.com/img/baidu_jgylogo3.gif" mode="autoFit"></axi-image>
 
