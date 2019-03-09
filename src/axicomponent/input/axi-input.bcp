@@ -130,7 +130,7 @@
                             }
                         },
                         init: function(){
-                            if($jsDom.hasAttr('focus')) this.handler(com.getAttrValue('focus'));
+                            if($jsDom.hasAttr('focus')) this.handler(comp.getAttrValue('focus'));
                         }
                     }
                 };
