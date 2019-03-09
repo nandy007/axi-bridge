@@ -141,6 +141,12 @@
             flex: 1;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+        }
+        .private-axi-tabbar-item-wrapper{
+            display:flex;
+            flex-direction: column;
+            align-items: center;
         }
         .private-axi-tabbar-item image{
             width: 32;
@@ -154,11 +160,11 @@
     </style>
     <ui>
         <box v-style="{'border-top-color':borderStyle, 'background-color':backgroundColor}" style="border-top-width:1;border-top-color:#ececec;">
-            <box v-for="item in tablist" class="private-axi-tabbar-item" v-on:click="selectItem($index)">
-                <box>
+            <box v-for="item in tablist" class="private-axi-tabbar-item">
+                <box class="private-axi-tabbar-item-wrapper" v-on:click="selectItem($index)">
                     <image v-bind:src="item.src"></image>
+                    <text v-text="item.text" v-style="{color:item.color}"></text>
                 </box>
-                <text v-text="item.text" v-style="{color:item.color}"></text>
             </box>
         </box>
     </ui>
