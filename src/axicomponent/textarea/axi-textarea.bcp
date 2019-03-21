@@ -199,6 +199,9 @@
                         }
                     }
                 };
+            },
+            click: function(){
+                this.$jsDom.attr('focus', true);
             }
         };
 

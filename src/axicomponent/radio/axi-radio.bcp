@@ -42,22 +42,21 @@
                         value: false,
                         handler: function(val){
                             this.init();
-                            var $group = $jsDom.closest('axi-radio-group');
-                            var groupComp = $group && $group[0].component;
-                            // console.log($group)
-                            if($group && val){
-                                groupComp.setMutex(jsDom);
-                                var $rds = $group.find('axi-radio');
-                                // console.log($rds.length)
-                                $rds.each(function(){
-                                    if(jsDom!==this){
-                                        $(this).attr('checked', false);
+                            var name = $jsDom.attr('name');
+                            if(name && val){
+                                var radios = comp.selectBySelector('axi-radio[name="'+name+'"]');
+
+                                comp.$.util.each(radios||[], function(i, radio){
+                                    if(radio===comp) return;
+                                    if(radio.getAttrValue('checked')){
+                                        radio.click(false);
                                     }
                                 });
-                                
                             }
-                            var need = groupComp ? groupComp.clearMutex(jsDom) : true;
-                            need && $group && $group.trigger('__change__');
+                            comp.triggerEvent('change', {
+                                checked: val,
+                                value: comp.getAttrValue('value')
+                            });
                         },
                         init: function(){
                             var checked = comp.getAttrValue('checked');
@@ -85,7 +84,7 @@
                     'click': {
                         // memo: '点击事件，切换checked状态',
                         handler: function(){
-                            $jsDom.on('click', function(){
+                            $jsDom.on('click', function(e){
                                 var disabled = comp.getAttrValue('disabled');
                                 if(disabled) return;
                                 var checked = comp.getAttrValue('checked');
@@ -95,8 +94,13 @@
                     }
                 };
             },
-            setChecked: function(){
-
+            click: function(flag){
+                if(arguments.length===1){
+                    this.$jsDom.attr('checked', !!flag);
+                }else{
+                    this.triggerEvent('click');
+                }
+                
             }
         };
 

@@ -110,13 +110,14 @@ module.exports = {
 
         MyClass = BaseComponent.wrapperClass(MyClass);
 
-        window.on('loaded', function(e) {
+        window.on('animator', function(e) {
             var jsDom = document;
             var page = new MyClass(jsDom);
             page.created && page.created();
-            window.on('animator', function(e) {
-                jsDom.fire('enter');
-            });
+            // window.on('animator', function(e) {
+            //     jsDom.fire('enter');
+            // });
+            jsDom.fire('enter');
     
             window.on('destroy', function(){
                 jsDom.fire('leave');

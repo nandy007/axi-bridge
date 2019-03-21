@@ -1,6 +1,6 @@
 /*
  *	Agile CE 移动前端MVVM框架
- *	Version	:	0.4.63.1551430676015 beta
+ *	Version	:	0.4.66.1553157807846 beta
  *	Author	:	nandy007
  *	License MIT @ https://github.com/nandy007/agile-ce
  */var __ACE__ = {};
@@ -206,7 +206,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 				directiveUtil.commonHandler.call(this, {
 					$node: $node,
 					fors: fors,
-					expression: '{{' + obj + '}}',
+					expression: directiveUtil.wrapperDir(obj),
 					cb: function cb(rs) {
 						_cb(rs);
 					}
@@ -220,12 +220,15 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 				directiveUtil.commonHandler.call(this, {
 					$node: $node,
 					fors: fors,
-					expression: '{{' + exp + '}}',
+					expression: directiveUtil.wrapperDir(exp),
 					cb: function cb(rs) {
 						_cb(rs, k);
 					}
 				});
 			}, this);
+		},
+		wrapperDir: function wrapperDir(exp) {
+			return '{{' + exp + '}}';
 		}
 	};
 
@@ -246,7 +249,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 			directiveUtil.commonHandler.call(this, {
 				$node: $node,
 				fors: fors,
-				expression: '{{' + expression + '}}',
+				expression: directiveUtil.wrapperDir(expression),
 				cb: function cb(rs) {
 					updater[updateFunc]($node, rs);
 				}
@@ -544,8 +547,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 				updater.updateShowHide($node, defaultValue, parser.getValue(expression, fors));
 			}, fors);
 		},
-		'vif': function vif($node, fors, expression, dir) {
-
+		'vcif': function vcif($node, fors, expression, dir) {
 			var parser = this,
 			    updater = this.updater;
 
@@ -595,6 +597,60 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 				mutexHandler();
 			}, fors);
 		},
+		'vif': function vif($node, fors, expression, dir) {
+
+			if ($node.hasAttr('mutexGroupCache') || Parser.config.mutexGroupCache) {
+				return this.vcif($node, fors, expression, dir);
+			}
+
+			var parser = this,
+			    updater = this.updater;
+
+			var branchGroup = this.getBranchGroup(dir === 'v-if' ? $node : null);
+			var $placeholder = branchGroup.$placeholder,
+			    nodes = $placeholder.def('nodes');
+
+			var preCompile = function preCompile($fragment) {
+				parser.vm.compileSteps($fragment, fors);
+			};
+
+			var mutexHandler = function mutexHandler() {
+				var theDef,
+				    lastIndex = -1;
+				$.util.each(nodes, function (i, nodeDef) {
+					var curRender = nodeDef.dir === 'v-else' ? true : parser.getValue(nodeDef.expression, fors);
+					if (curRender) {
+						lastIndex = i;
+						theDef = nodeDef;
+						return false;
+					}
+				});
+				if ($placeholder.def('lastIndex') === lastIndex) return;
+				$placeholder.def('lastIndex', lastIndex);
+				if (theDef) {
+					updater.branchRender($placeholder, $(theDef.html), preCompile);
+				} else {
+					updater.branchRender($placeholder, null, preCompile);
+				}
+			};
+
+			var $siblingNode = $node.next();
+			nodes.push({
+				html: $node.outerHTML(),
+				expression: expression,
+				dir: dir
+			});
+			$node.remove();
+			if (!$siblingNode.hasAttr('v-else') && !$siblingNode.hasAttr('v-elseif')) {
+				mutexHandler();
+			}
+
+			var deps = Parser.getDepsAlias(expression, fors, parser.getVmPre()).deps;
+
+			parser.watcher.watch(deps, function (options) {
+				mutexHandler();
+			}, fors);
+		},
 		'velseif': function velseif($node, fors, expression, dir) {
 			var args = $.util.copyArray(arguments);
 			this.vif.apply(this, args);
@@ -606,8 +662,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 		'vlike': function vlike($node, fors, expression) {
 			$node.data('__like', expression);
 		},
-		'vmodel': function vmodel($node, fors, expression) {
-			var type = $node.data('__like') || $node.elementType();
+		'vmodel': function vmodel($node, fors, expression, dir) {
+			var type = dir.indexOf(':') > -1 ? dir.split(':')[1] : $node.data('__like') || $node.elementType();
 			switch (type) {
 				case 'text':
 				case 'password':
@@ -656,7 +712,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 			var parser = this,
 			    updater = this.updater;
 
-			var access = Parser.makePath(expression, fors);
+			var access = Parser.makeDep(expression, fors, parser.getVmPre());
 
 			var duplexField = parser.getDuplexField(access),
 			    duplex = duplexField.duplex(parser.$scope),
@@ -693,7 +749,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 			var parser = this,
 			    updater = this.updater;
 
-			var access = Parser.makePath(expression, fors);
+			var access = Parser.makeDep(expression, fors, parser.getVmPre());
 
 			var duplexField = parser.getDuplexField(access),
 			    duplex = duplexField.duplex(this.$scope),
@@ -753,7 +809,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 			var parser = this,
 			    updater = this.updater;
 
-			var access = Parser.makePath(expression, fors);
+			var access = Parser.makeDep(expression, fors, parser.getVmPre());
 
 			var duplexField = parser.getDuplexField(access),
 			    duplex = duplexField.duplex(parser.$scope),
@@ -811,7 +867,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 			var parser = this,
 			    updater = this.updater;
 
-			var access = Parser.makePath(expression, fors);
+			var access = Parser.makeDep(expression, fors, parser.getVmPre());
 
 			var duplexField = parser.getDuplexField(access),
 			    duplex = duplexField.duplex(parser.$scope),
@@ -825,7 +881,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 			}, fors);
 
 			Parser.bindChangeEvent($node, function () {
-				var access = Parser.makePath(expression, fors);
+				var access = Parser.makeDep(expression, fors, parser.getVmPre());
 				var duplexField = parser.getDuplexField(access),
 				    duplex = duplexField.duplex(parser.$scope),
 				    field = duplexField.field;
@@ -986,6 +1042,17 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 			$placeholder.insertBefore($node);
 		}
 		return this.mutexGroup;
+	};
+	pp.getBranchGroup = function ($node) {
+		if ($node) {
+			var $placeholder = $.ui.createJQPlaceholder();
+			$placeholder.def('nodes', []);
+			this.branchGroup = {
+				$placeholder: $placeholder
+			};
+			$placeholder.insertBefore($node);
+		}
+		return this.branchGroup;
 	};
 
 	/**
@@ -1754,6 +1821,9 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 	Parser.hasVMPre = function () {
 		return !!__vmPre;
 	};
+	Parser.config = {
+		mutexGroupCache: false
+	};
 
 	module.exports = Parser;
 
@@ -1920,6 +1990,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	}
 
 	JQLite.prototype = {
+		getPage: function getPage() {
+			var dom = document.getRootElement();
+			return jqlite(dom);
+		},
+		outerHTML: function outerHTML() {
+			var el = this[0];
+			if (!el) return null;
+			return el.getOuterHTML();
+		},
 		add: function add(el) {
 			$el = el instanceof JQLite ? el : new JQLite(el);
 			var domList = this.domList;
@@ -2540,7 +2619,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.each(function () {
 				var eventarr = this.getOn(evtName) || [];
 				jqlite.util.each(eventarr, function (i, func) {
-					func.apply(this, args.slice(0));
+					var _args = args.slice(0);
+					_args.push({
+						type: evtName,
+						currentTarget: this,
+						target: this,
+						timestamp: new Date().getTime()
+					});
+					func.apply(this, _args);
 				}, this);
 			});
 			return this;
@@ -2705,6 +2791,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		if (!obj) return;
 		var ret;
 		if (this.isArray(obj) || !this.util.isString(obj) && this.util.isNotNaNNumber(obj.length)) {
+			obj = jqlite.util.copyArray(obj);
 			for (var i = 0; i < obj.length; i++) {
 				ret = callback.call(context, i, obj[i]);
 				if (ret === false) {
@@ -3350,7 +3437,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			return el ? new JQAdapter(el) : new JQAdapter();
 		},
 		createJQPlaceholder: function createJQPlaceholder() {
-			var dom = document.createElement("text", { style: 'display:none;' });
+			// var dom = document.createElement("text", {style:'display:none;'});
+			var dom = document.createElement('placeholder');
 			dom.isPlaceholder = true;
 			return jqlite(dom);
 		},
@@ -4101,7 +4189,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (priorityDirs.vcontext) nodeAttrs.unshift(priorityDirs.vcontext);
 			}
 			if (priorityDirs.vif) {
-				nodeAttrs.push(priorityDirs.vif);
+				nodeAttrs = [priorityDirs.vif];
 			}
 
 			//编译节点指令
@@ -4545,6 +4633,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		} else {
 			$fragment.append($node);
 		}
+	};
+	up.branchRender = function ($placeholder, $node, cb) {
+		var $old = $placeholder.def('old');
+		$old && $old.remove();
+		if ($node) {
+			cb($node);
+			$node.insertAfter($placeholder);
+		}
+		$placeholder.def('old', $node);
 	};
 
 	/**
@@ -5277,7 +5374,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var arrProto = array.__proto__;
 		var arrCbs = arrProto.cbs || {};
 
-		array.oPaths = paths;
+		arrProto.oPaths = paths;
 
 		// 已经监听过的数组不再重复监听
 		if (arrCbs[this.observeIndex]) return;
@@ -5380,7 +5477,9 @@ var BaseComponent = function () {
         value: function __setThisData(isCreat) {
             if (this.data) return;
             if (!this.viewData && isCreat) {
-                this.viewData = {};
+                this.viewData = {
+                    data: {}
+                };
             }
             var viewData = this.viewData;
             if (!viewData) return;
@@ -5394,8 +5493,31 @@ var BaseComponent = function () {
     }, {
         key: '__setViewData',
         value: function __setViewData(k, v) {
-            var data = this.data;
+            var data = this.data,
+                $jsDom = this.$jsDom,
+                $ = this.$;
+
             data[k] = v;
+
+            Object.defineProperty(data, k, {
+                get: function get() {
+                    return v;
+                },
+                set: function set(n) {
+                    try {
+                        if (String(n) !== $jsDom.attr(k)) $jsDom.attr(k, n);
+                    } catch (e) {
+                        $jsDom.attr(k, n);
+                    }
+                    if (v instanceof Array) {
+                        v.$reset(n);
+                    } else if ((typeof v === 'undefined' ? 'undefined' : _typeof(v)) === 'object') {
+                        $.extend(v, n);
+                    } else {
+                        v = n;
+                    }
+                }
+            });
         }
     }, {
         key: '__addCommProps',
@@ -5459,8 +5581,9 @@ var BaseComponent = function () {
                 (function (k) {
                     _this.__setViewData(k, _this.getAttrValue(k));
                     prop.handler = function (val) {
-                        _this.__setViewData(k, val);
+                        _this.data[k] = val;
                     };
+                    prop.init = function () {};
                 })(k);
             }
 
@@ -5556,19 +5679,25 @@ var BaseComponent = function () {
 
     }, {
         key: 'setData',
-        value: function setData(obj) {
+        value: function setData(data) {
             var pre = this.__getVmPre();
-            var nObj = {};
-            if (pre) {
-                nObj[pre] = obj;
-            } else {
-                nObj = obj;
+            for (var k in data) {
+                var exp = 'obj.' + (pre ? pre + '.' : '') + k;
+                var val = data[k];
+                if ((typeof val === 'undefined' ? 'undefined' : _typeof(val)) === 'object') val = JSON.parse(JSON.stringify(val));
+                new Function('obj', 'val', 'try{ ' + exp + ' = val; }catch(e){console.log(e);}')(this.viewData, val);
             }
-            if (!this.$vm) {
-                this.$.extend(true, this.viewData, nObj);
-            } else {
-                this.$vm.setViewData(nObj);
-            }
+            // var nObj = {};
+            // if(pre){
+            // 	nObj[pre] = obj;
+            // }else{
+            // 	nObj = obj;
+            // }
+            // if (!this.$vm){
+            // 	this.$.extend(true, this.viewData, nObj);
+            // }else{
+            // 	this.$vm.setViewData(nObj);
+            // }
         }
     }, {
         key: '__initEvent',
@@ -5619,7 +5748,14 @@ var BaseComponent = function () {
     }, {
         key: 'triggerEvent',
         value: function triggerEvent(evtName, param) {
-            this.$jsDom.triggerHandler(evtName, [param]);
+            var jsDom = this.$jsDom[0],
+                k = '__before' + evtName.toLowerCase();
+            if (param) {
+                jsDom[k] = function (el, e) {
+                    e.detail = param;
+                };
+            }
+            this.$jsDom.triggerHandler(evtName);
         }
         // 获取dom对象的component实例，基础组件和扩展组件都可调用，对应小程序selectComponent
 
@@ -5635,10 +5771,37 @@ var BaseComponent = function () {
             var selectCom = this.$root.find(selector),
                 rs = [];
             selectCom.each(function () {
-                var curComp = selectCom && selectCom.component;
+                var curComp = this && this.component;
                 if (curComp) rs.push(curComp);
             });
             return rs;
+        }
+    }, {
+        key: '__selectAllComponents',
+        value: function __selectAllComponents(selector, isFirst) {
+            var $page = this.$jsDom.getPage();
+            var selectCom = $page.find(selector),
+                rs = [];
+            selectCom.each(function () {
+                var curComp = this && this.component;
+                if (curComp) rs.push(curComp);
+            });
+            return isFirst ? rs[0] : rs;
+        }
+    }, {
+        key: 'selectById',
+        value: function selectById(id) {
+            return this.__selectAllComponents('#' + id, true);
+        }
+    }, {
+        key: 'selectByName',
+        value: function selectByName(name) {
+            return this.__selectAllComponents('[name="' + name + '"]');
+        }
+    }, {
+        key: 'selectBySelector',
+        value: function selectBySelector(selector, isFirst) {
+            return this.__selectAllComponents(selector, isFirst);
         }
     }]);
 
@@ -5753,6 +5916,7 @@ BaseComponent.createClass = function (options, fullTag) {
     };
 
     if (fullTag) MyPage.fullTag = fullTag;
+    if (options.isNode) MyPage.isNode = true;
 
     return MyPage;
 };

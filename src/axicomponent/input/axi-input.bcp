@@ -211,6 +211,9 @@
                         }
                     },
                 };
+            },
+            click: function(){
+                this.$jsDom.attr('focuse', true);
             }
         };
 

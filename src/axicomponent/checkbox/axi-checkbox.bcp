@@ -41,9 +41,13 @@
                         handler: function(val){
                             this.init();
                             
-                            var $group = $jsDom.closest('axi-checkbox-group');
-                            $group && $group.trigger('__change__');
-                            // console.log($group)
+                            // var $group = $jsDom.closest('axi-checkbox-group');
+                            // $group && $group.trigger('__change__');
+                            comp.triggerEvent('change', {
+                                value: comp.getAttrValue('value'),
+                                checked: val
+                            });
+
                         },
                         init: function(){
                             var checked = comp.getAttrValue('checked');
@@ -73,6 +77,9 @@
                         }
                     }
                 };
+            },
+            click: function(){
+                this.triggerEvent('click');
             }
         };
 

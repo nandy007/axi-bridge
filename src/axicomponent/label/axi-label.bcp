@@ -33,9 +33,9 @@
                         handler: function(){
                             $jsDom.on('click', function(){
                                 var _for = comp.getAttrValue('for');
-                                var $el = _for ? $('#'+_for) : $jsDom.find('axi-checkbox,axi-radio,axi-input');
-                                // console.log($el&&$el[0]);
-                                $el && $el.trigger('click');
+                                if(!_for) return;
+                                var com = comp.selectById(_for);
+                                com && com.click && com.click();
                             });
                         }
                     }
