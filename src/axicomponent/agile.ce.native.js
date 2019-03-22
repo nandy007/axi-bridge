@@ -1,6 +1,6 @@
 /*
  *	Agile CE 移动前端MVVM框架
- *	Version	:	0.4.66.1553157807846 beta
+ *	Version	:	0.4.68.1553247920490 beta
  *	Author	:	nandy007
  *	License MIT @ https://github.com/nandy007/agile-ce
  */var __ACE__ = {};
@@ -5086,8 +5086,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	var $ = __webpack_require__(0).JQLite;
 
+	var util = {
+		def: function def(obj, prop, val) {
+			Object.defineProperty(obj, prop, {
+				//设置是否可以枚举
+				enumerable: false,
+				//是否可以删除目标属性
+				// configurable: false,
+				// writable 控制是否可以修改(赋值)
+				writable: true,
+				//获取属性值  
+				value: val
+			});
+		}
+	};
+
+	var __arrProto = Array.prototype;
 	//v8引擎sort算法与浏览器不同，重写sort函数，以xSort代替
-	Array.prototype.xSort = function (fn) {
+	util.def(__arrProto, 'xSort', function (fn) {
 		var fn = fn || function (a, b) {
 			return a > b;
 		};
@@ -5101,18 +5117,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 		}
 		return this;
-	};
+	});
 	// 重写push算法，使用索引值添加，提高效率
-	Array.prototype.xPush = function () {
+	util.def(__arrProto, 'xPush', function () {
 		var l = this.length;
 		for (var i = 0, len = arguments.length; i < len; i++) {
 			this[l + i] = arguments[i];
 		}
 		return this;
-	};
+	});
 
 	// 增加$set方法修改元素值
-	Array.prototype.$set = function (pos, item) {
+	util.def(__arrProto, '$set', function (pos, item) {
 		var len = this.length;
 		if (pos > len) {
 			return this.push(item);
@@ -5120,12 +5136,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			return this.unshift(item);
 		}
 		return this.splice(pos, 1, item);
-	};
+	});
 
 	// 增加$reset方法重置数组，如果没有参数则重置为空数组
-	Array.prototype.$reset = function (arr) {
+	util.def(__arrProto, '$reset', function (arr) {
 		return this.splice.apply(this, [0, this.length || 1].concat(arr || []));
-	};
+	});
 
 	// 重写的数组操作方法
 	var rewriteArrayMethods = ['pop', 'push', 'sort', 'shift', 'splice', 'unshift', 'reverse', 'xSort', 'xPush'];
@@ -5349,7 +5365,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				});
 			});
 
-			arrayMethods.cbs = arrCbs;
+			// arrayMethods.cbs = arrCbs;
+			util.def(arrayMethods, 'cbs', arrCbs);
 
 			array.__proto__ = arrayMethods;
 		};
@@ -5374,7 +5391,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var arrProto = array.__proto__;
 		var arrCbs = arrProto.cbs || {};
 
-		arrProto.oPaths = paths;
+		util.def(arrProto, 'oPaths', paths);
 
 		// 已经监听过的数组不再重复监听
 		if (arrCbs[this.observeIndex]) return;
@@ -5477,12 +5494,11 @@ var BaseComponent = function () {
         value: function __setThisData(isCreat) {
             if (this.data) return;
             if (!this.viewData && isCreat) {
-                this.viewData = {
-                    data: {}
-                };
+                this.viewData = {};
             }
             var viewData = this.viewData;
             if (!viewData) return;
+            if (!viewData.data) viewData.data = {};
             var pre = this.__getVmPre();
             if (pre) {
                 this.data = viewData[pre] = viewData[pre] || {};
@@ -5753,6 +5769,7 @@ var BaseComponent = function () {
             if (param) {
                 jsDom[k] = function (el, e) {
                     e.detail = param;
+                    return this.getComponent();
                 };
             }
             this.$jsDom.triggerHandler(evtName);

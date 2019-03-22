@@ -202,10 +202,8 @@
                         handler: function(){
                             $inputDom.on('return', function(e, returnKeyType){
                                 if(returnKeyType!=='next') window.hideSip();
-                                jsDom.fireExtend('confirm', {
-                                    detail: {
-                                        value: $inputDom.val()
-                                    }
+                                comp.triggerEvent('confirm', {
+                                    value: $inputDom.val()
                                 });
                             });
                         }

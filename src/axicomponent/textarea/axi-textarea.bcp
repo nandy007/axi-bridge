@@ -126,10 +126,8 @@
                         handler: function(){
                             $inputDom.on('textChanged', function(e, value){
                                 $jsDom.attr('value', $inputDom.val());
-                                jsDom.fireExtend('input', {
-                                    detail: {
-                                        value: $inputDom.val()
-                                    }
+                                comp.triggerEvent('input', {
+                                    value: $inputDom.val()
                                 });
                             });
                         }
@@ -178,10 +176,8 @@
                         handler: function(){
                             $inputDom.on('return', function(e, returnKeyType){
                                 if(returnKeyType!=='next') window.hideSip();
-                                jsDom.fireExtend('confirm', {
-                                    detail: {
-                                        value: $inputDom.val()
-                                    }
+                                comp.triggerEvent('confirm', {
+                                    value: $inputDom.val()
                                 });
                             });
                         }
@@ -190,10 +186,8 @@
                         // memo: '输入框行数变化时调用，event.detail = {height: 0}',
                         handler: function(){
                             $inputDom.on('__linechange__', function(e, item){
-                                jsDom.fireExtend('linechange', {
-                                    detail: {
-                                        height: item.height
-                                    }
+                                comp.triggerEvent('linechange', {
+                                    height: item.height
                                 });
                             });
                         }

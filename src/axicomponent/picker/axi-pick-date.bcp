@@ -215,10 +215,8 @@
                             var val = dateUtil.formateValue(rs, '-');
                             if(val===comp.getAttrValue('value')) return;
                             $jsDom.attr('value', val);
-                            $jsDom[0].fireExtend('change', {
-                                detail: {
-                                    value: val
-                                }
+                            comp.triggerEvent('change', {
+                                value: val
                             });
                         }
                     },
@@ -226,7 +224,7 @@
                         memo: '取消选择时触发',
                         handler: function(val){
                             if(arguments.length===0) return; // 不需要初始化
-                            $jsDom[0].fire('cancel');
+                            comp.triggerEvent('cancel');
                         }
                     }
                 };

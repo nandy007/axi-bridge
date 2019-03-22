@@ -98,10 +98,8 @@
                             if(arguments.length===0) return; // 不需要初始化
                             if(item.value===comp.getAttrValue('value')) return;
                             $jsDom.attr('value', item.value);
-                            $jsDom[0].fireExtend('change', {
-                                detail: {
-                                    value: item.value
-                                }
+                            comp.triggerEvent('change', {
+                                value: item.value
                             });
                         }
                     },
@@ -109,7 +107,7 @@
                         memo: '取消选择或点遮罩层收起 picker 时触发',
                         handler: function(val){
                             if(arguments.length===0) return; // 不需要初始化
-                            $jsDom[0].fire('cancel');
+                            comp.triggerEvent('cancel');
                         }
                     }
                 };

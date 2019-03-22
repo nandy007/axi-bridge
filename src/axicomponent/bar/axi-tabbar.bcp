@@ -112,10 +112,8 @@
                         // memo: '选择item,{detail:{value:index}}',
                         handler: function(index){
                             if(arguments.length===0) return;
-                            $jsDom[0].fireExtend('changed', {
-                                detail: {
-                                    value: index
-                                }
+                            comp.triggerEvent('changed', {
+                                value: index
                             });
                         }
                     }

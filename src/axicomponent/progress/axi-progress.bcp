@@ -153,7 +153,7 @@
                     'activeend': {
                         memo: '动画完成事件',
                         handler: function(flag){
-                            if(flag) jsDom.fire('activeend');
+                            if(flag) comp.triggerEvent('activeend');
                         }
                     }
                 };

@@ -86,10 +86,8 @@
                             $jsDom.on('click', function(){
                                 var val = !comp.getAttrValue('checked');
                                 $jsDom.attr('checked', val);
-                                $jsDom[0].fireExtend('change', {
-                                    detail: {
-                                        value: val
-                                    }
+                                comp.triggerEvent('change', {
+                                    value: val
                                 });
                             });
                         }

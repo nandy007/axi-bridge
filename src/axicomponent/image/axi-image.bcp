@@ -58,13 +58,9 @@
                         // memo: '当错误发生时，发布到 AppService 的事件名，事件对象event.detail = {errMsg: 'something wrong'}',
                         handler: function(){
                             $img.on('failed', function(){
-
-                                img.fireExtend('error', {
-                                    detail: {
-                                        errMsg: 'load failed'                                      }
+                                comp.triggerEvent('error', {
+                                    errMsg: 'load failed'    
                                 });
-                    
-                                
                             });
                         }
                     },
@@ -79,13 +75,10 @@
                                 if(comp.getAttrValue('mode')==='autoFit'){
                                     $img.css(comp.__trueSize);
                                 }
-                                img.fireExtend('load', {
-                                    detail: {
-                                        width: param.width,
-                                        height: param.height
-                                    }
+                                comp.triggerEvent('load', {
+                                    width: param.width,
+                                    height: param.height   
                                 });
-                                
                             });
                         }
                     }
