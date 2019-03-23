@@ -184,8 +184,12 @@
                             comp.data.isShow = true;
                         }, 3000);
 
-                        require('Document').refresh()
+                        // require('Document').refresh();
 
+                        comp.data.inputText = '2222';
+                        comp.data.cks.push('cn');
+                        comp.data.rd = 'am';
+                        comp.data.slt = '1';
                     }, 3000);
                 },
                 method: {
@@ -206,7 +210,7 @@
                         // console.log(e)
                     },
                     ckChange: function(e){
-                        console.log(JSON.stringify(e.detail));
+                        // console.log(JSON.stringify(e.detail));
                     },
                     focus: function(e){
                         // console.log(e.detail)
@@ -226,16 +230,20 @@
                         // console.log(this.viewData.data.title);
                     },
                     tabChange: function(e){
-                        console.log(e.detail.value)
+                        // console.log(e.detail.value)
                     },
                     tap: function(e){
-                        console.log(e.target)
+                        // console.log(e.target)
                     },
                     click: function(e){
-                        console.log(e.currentTarget.dataset)
+                        // console.log(e.currentTarget.dataset)
                     }
                 },
                 data: {
+                    inputText: '这是输入内容',
+                    cks: ['am'],
+                    rd: 'cn',
+                    slt: '2',
                     title: '这是标题',
                     html: '<b>fsdfds</b> &lt; dfd    <span style="color:blue;">fdsfdsf</span>   <br>这&nbsp;&nbsp;&nbsp;&nbsp;是<font color="red">富文本</font>来的',
                     text: 'aaa   bbb',
@@ -330,30 +338,30 @@
 
     
                     <axi-label class="group-item" for="ck1">
-                        <axi-checkbox id="ck1" checked="true" color="red" value="cn" disabled="false" v-on:change="method.ckChange"></axi-checkbox>
+                        <axi-checkbox id="ck1" v-model:checkbox="cks" color="red" value="cn" disabled="false" v-on:change="method.ckChange"></axi-checkbox>
                         <axi-text text="中国"></axi-text>
                     </axi-label>
                     <axi-label class="group-item" for="ck2">
-                        <axi-checkbox id="ck2" checked="false" color="red" value="am" disabled="false" v-on:change="method.ckChange"></axi-checkbox>
+                        <axi-checkbox id="ck2" v-model:checkbox="cks" color="red" value="am" disabled="false" v-on:change="method.ckChange"></axi-checkbox>
                         <axi-text text="美国"></axi-text>
                     </axi-label>
 
 
                     <axi-label class="group-item" for="rd1">
-                        <axi-radio name="rd" id="rd1" checked="true" value="cn" disabled="false" v-on:change="method.ckChange"></axi-radio>
+                        <axi-radio name="rd" id="rd1" v-model:radio="rd" value="cn" disabled="false" v-on:change="method.ckChange"></axi-radio>
                         <axi-text text="中国"></axi-text>
                     </axi-label>
                     <axi-label class="group-item" for="rd2">
-                        <axi-radio name="rd" id="rd2" checked="false" value="am" v-on:change="method.ckChange"></axi-radio>
+                        <axi-radio name="rd" id="rd2" v-model:radio="rd" value="am" v-on:change="method.ckChange"></axi-radio>
                         <axi-text text="美国"></axi-text>
                     </axi-label>
 
 
-                    <axi-input v-bind:focus="inputFocus" disabled="false" maxlength="-1" placeholderColor="blue" type="text" password="true" v-on:input="method.input" v-on:focus="method.focus" placeholder="请输入文本"></axi-input>
+                    <axi-input v-model:text="inputText" maxlength="-1" placeholderColor="blue" type="text" password="false" placeholder="请输入文本"></axi-input>
                     <axi-text v-text="'有多少行数据？答：'+line"></axi-text>
                     <axi-textarea v-on:linechange="method.linechange" autoHeight="true" maxlength="-1" placeholder="请输入文本"></axi-textarea>
 
-                    <axi-select placeholder="请选择" value="2" options="[{text:'内容1', value:'1'},{text:'内容2', value:'2'}]" disabled="false"></axi-select>
+                    <axi-select placeholder="请选择" v-model:select="slt" options="[{text:'内容1', value:'1'},{text:'内容2', value:'2'}]" disabled="false"></axi-select>
 
                     <axi-pick-date placeholder="请选择" fields="month"></axi-pick-date>
                     <axi-pick-date placeholder="请选择" start="1970-09-30" value="2001-10-05"></axi-pick-date>

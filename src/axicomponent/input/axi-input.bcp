@@ -149,10 +149,8 @@
                                     delete inputDom.__textChanged;
                                 }else{
                                     $jsDom.attr('value', $inputDom.val());
-                                    jsDom.fireExtend('input', {
-                                        detail: {
-                                            value: $inputDom.val()
-                                        }
+                                    comp.triggerEvent('input', {
+                                        value: $inputDom.val()
                                     });
                                 }
                             });

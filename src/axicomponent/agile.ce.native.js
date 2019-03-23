@@ -1,6 +1,6 @@
 /*
  *	Agile CE 移动前端MVVM框架
- *	Version	:	0.4.68.1553247920490 beta
+ *	Version	:	0.4.72.1553331699741 beta
  *	Author	:	nandy007
  *	License MIT @ https://github.com/nandy007/agile-ce
  */var __ACE__ = {};
@@ -457,7 +457,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 				expression: expression,
 				cb: function cb(rs, k) {
 					if (k) {
-						$node.css(k, rs);
+						updater.updateStyle($node, k, rs);
 						return;
 					}
 					rs = directiveUtil.formatStyle(rs);
@@ -480,22 +480,22 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 				expression: expression,
 				cb: function cb(rs, k) {
 					if (k) {
-						$node[rs ? 'addClass' : 'removeClass'](k);
+						updater.updateClass($node, k, rs);
 						return;
 					}
 
 					if (typeof oldClass === 'string') {
-						$node.removeClass(oldClass);
+						updater.updateClass($node, oldClass, false);
 					} else if ((typeof oldClass === 'undefined' ? 'undefined' : _typeof(oldClass)) === 'object') {
 						$.util.each(oldClass, function (k, v) {
-							$node.removeClass(k);
+							updater.updateClass($node, k, false);
 						});
 					}
 					if (typeof rs === 'string') {
-						$node.addClass(rs);
+						updater.updateClass($node, rs, true);
 					} else if ((typeof rs === 'undefined' ? 'undefined' : _typeof(rs)) === 'object') {
 						$.util.each(rs, function (k, v) {
-							$node[v ? 'addClass' : 'removeClass'](k);
+							updater.updateClass($node, k, v);
 						});
 					}
 					oldClass = rs;
@@ -504,22 +504,24 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 		},
 		'vxclass': function vxclass($node, fors, expression) {
 
-			var oldClass;
+			var oldClass,
+			    updater = this.updater;
 
 			directiveUtil.commonHandler.call(this, {
 				$node: $node,
 				fors: fors,
 				expression: expression,
 				cb: function cb(rs) {
-					if (oldClass) $node.removeClass(oldClass);
-					if (rs) $node.addClass(rs);
+					if (oldClass) updater.updateClass($node, oldClass, false);
+					if (rs) updater.updateClass($node, rs, true);
 					oldClass = rs;
 				}
 			});
 		},
 		'vxstyle': function vxstyle($node, fors, expression) {
 
-			var styles = directiveUtil.formatStyle(expression);
+			var styles = directiveUtil.formatStyle(expression),
+			    updater = this.updater;
 
 			$.util.each(styles, function (styleName, exp) {
 				directiveUtil.commonHandler.call(this, {
@@ -527,7 +529,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 					fors: fors,
 					expression: exp,
 					cb: function cb(rs) {
-						$node.css(styleName, rs);
+						updater.updateStyle($node, styleName, rs);
 					}
 				});
 			}, this);
@@ -720,7 +722,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 			var value = parser.getValue(expression, fors);
 
-			var isChecked = $node.is(':checked');
+			var isChecked = $node.isChecked();
 
 			// 如果已经定义了默认值
 			if (isChecked) {
@@ -735,7 +737,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 			}, fors);
 
 			Parser.bindChangeEvent($node, function () {
-				if ($node.is(':checked')) {
+				if ($node.isChecked()) {
 					var access = Parser.makeDep(expression, fors, parser.getVmPre());
 					var duplexField = parser.getDuplexField(access),
 					    duplex = duplexField.duplex(parser.$scope),
@@ -757,7 +759,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 			var value = parser.getValue(expression, fors);
 
-			var isChecked = $node.is(':checked');
+			var isChecked = $node.isChecked();
 
 			if (isChecked) {
 				if ($.util.isBoolean(value)) {
@@ -784,7 +786,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 				value = duplex[field];
 
 				var $this = $(this);
-				var checked = $this.is(':checked');
+				var checked = $this.isChecked();
 
 				if ($.util.isBoolean(value)) {
 					duplex[field] = checked;
@@ -1990,6 +1992,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	}
 
 	JQLite.prototype = {
+		isChecked: function isChecked() {
+			return this.is(':checked');
+		},
 		getPage: function getPage() {
 			var dom = document.getRootElement();
 			return jqlite(dom);
@@ -2300,6 +2305,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 		},
 		prop: function prop() {
+			this.attr.apply(this, arguments);
+		},
+		xprop: function xprop() {
 			this.attr.apply(this, arguments);
 		},
 		removeAttr: function removeAttr(name) {
@@ -3699,6 +3707,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var util = module.exports = {
+    isBooleanAttr: function isBooleanAttr(name) {
+        var __booleanAttr = ['disabled', 'checked', 'selected', 'autoplay'];
+        return __booleanAttr.indexOf(name) > -1;
+    },
     cleanJSON: function cleanJSON(obj) {
         try {
             obj = JSON.parse(JSON.stringify(obj));
@@ -4711,7 +4723,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   */
 	up.updateRadioChecked = function ($radio, value) {
 		var checkStatus = $radio.val() === ($.util.isNotNaNNumber(value) ? String(value) : value);
-		if ($radio.prop('checked') != checkStatus) $radio.prop('checked', checkStatus);
+		if ($radio.xprop('checked') != checkStatus) $radio.xprop('checked', checkStatus);
 	};
 
 	/**
@@ -4732,7 +4744,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		var checkStatus = $.util.isBoolean(values) ? values : values.indexOf(value) > -1;
 
-		if ($checkbox.prop('checked') != checkStatus) $checkbox.prop('checked', checkStatus);
+		if ($checkbox.xprop('checked') != checkStatus) $checkbox.xprop('checked', checkStatus);
 	};
 
 	/**
@@ -4742,17 +4754,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   * @param   {Boolean}               multi
   */
 	up.updateSelectChecked = function ($select, selected, multi) {
-		var getNumber = $select.hasAttr('number');
-		var $options = $select.children(),
-		    leng = $options.length;
-		var multiple = multi || $select.hasAttr('multiple');
+		// var getNumber = $select.hasAttr('number');
+		// var $options = $select.children(), leng = $options.length;
+		// var multiple = multi || $select.hasAttr('multiple');
 
-		$options.each(function (i) {
-			var $option = $(this);
-			var value = $option.val();
-			value = getNumber ? +value : $option.hasAttr('number') ? +value : value;
-			$option.prop('selected', multiple ? selected.indexOf(value) > -1 : selected === value);
-		});
+		// $options.each(function(i){
+		// 	var $option = $(this);
+		// 	var value = $option.val();
+		// 	value = getNumber ? +value : ($option.hasAttr('number') ? +value : value);
+		// 	$option.prop('selected', multiple ? selected.indexOf(value) > -1 : selected === value);
+		// });
+		$select.val(selected);
 	};
 
 	module.exports = Updater;
