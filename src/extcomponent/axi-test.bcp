@@ -6,7 +6,7 @@
     </module>
     <script>
         <![CDATA[
-        require('../axicomponent/view/axi-view.bcp');
+        require('../axicomponent/view/view.bcp');
         var console = require('Console');
 
         var Component = require('../axicomponent/include.js')(module, 'axi-test').Component;
@@ -55,8 +55,8 @@
 
     </style>
     <ui>
-        <axi-view>
-            <axi-view v-for="item in list"><text>{{item.title}}</text></axi-view>
-        </axi-view>
+        <view>
+            <view v-for="item in list"><text>{{item.title}}</text></view>
+        </view>
     </ui>
 </page>

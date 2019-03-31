@@ -3,7 +3,7 @@
         <![CDATA[
             require('../../extcomponent/axi-test.bcp');
             require('../../extcomponent/axi-ext-view.bcp');
-            require('../../axicomponent/view/axi-view.bcp');
+            require('../../axicomponent/view/view.bcp');
             require('../../axicomponent/scroll-view/axi-scroll-view.bcp');
             require('../../axicomponent/swiper/swiper.bcp');
             require('../../axicomponent/swiper/swiper-item.bcp');
@@ -311,9 +311,9 @@
 
     </style>
     <ui>
-        <axi-view id="root" class="rootBox">
+        <view id="root" class="rootBox">
             <axi-titlebar hideLeftSide="true" title="首页" style="border-bottom-width:1;border-bottom-color:#ececec;"></axi-titlebar>
-            <axi-view style="flex:1;padding:4 4 4 4;">
+            <view style="flex:1;padding:4 4 4 4;">
             <axi-scroll-view v-on:scroll="method.scroll" v-on:scrolltoupper="method.upper" v-on:scrolltolower="method.lower">
                 <axi-text v-bind:text="title"></axi-text>
                 <axi-text v-on:tap="method.tap" v-bind:html="html" selectable="true" space="nbsp"></axi-text>
@@ -327,13 +327,13 @@
                 <axi-test v-bind:list="list" memo="测试对象属性"></axi-test>
 
                 <axi-button id="ttt" data-aaa-bbb="ccc" type="warn" disabled="false" hoverClass="hoverclass" loading="true" v-on:click="method.click"><axi-text text="这是一个button"></axi-text></axi-button>
-                <axi-view style="padding: 10 0 10 0;flex-direction:column;">
+                <view style="padding: 10 0 10 0;flex-direction:column;">
 
-                    <axi-view style="flex-direction:row;">
+                    <view style="flex-direction:row;">
                         <axi-switch checked="true"></axi-switch>
                         <axi-switch checked="true" color="red" style="margin: 0 4 0 4;"></axi-switch>
                         <axi-switch disabled="true"></axi-switch>
-                    </axi-view>
+                    </view>
                     
 
     
@@ -370,9 +370,9 @@
 
                     <axi-pick-time placeholder="请选择" start="07:30" end="14:31"></axi-pick-time>
                 
-                </axi-view>
+                </view>
 
-                <axi-view style="flex-direction:row;">
+                <view style="flex-direction:row;">
                     <axi-icon type="success"></axi-icon>
                     <axi-icon type="info"></axi-icon>
                     <axi-icon type="warn" color="#c9c9c9"></axi-icon>
@@ -384,11 +384,11 @@
                     <axi-icon type="info_circle"></axi-icon>
                     <axi-icon type="cancel"></axi-icon>
                     <axi-icon type="search"></axi-icon>
-                </axi-view>
-                <axi-view style="flex-direction:row;">
+                </view>
+                <view style="flex-direction:row;">
                     <axi-progress percent="40" active="true" activeMode="forwards" borderRadius="5" strokeWidth="10" style="margin-right:20;"></axi-progress>
                     <axi-icon type="cancel"></axi-icon>
-                </axi-view>
+                </view>
                 <axi-progress v-bind:percent="percent" active="true" activeMode="forwards" fontSize="14" activeColor="#10aeff" showInfo="true"></axi-progress>
                 
                 <swiper style="height: 200;" current="1" indicatorDots="true" v-on:change="method.swiperChange">
@@ -396,25 +396,25 @@
                         <axi-image mode="scaleToFill" v-bind:src="pic.src" style="flex:1;" />
                     </swiper-item> 
                 </swiper>
-                <axi-view v-for="item in list" v-bind:data-index="$index" class="myview" hoverClass="hoverclass" v-on:touchDown="method.doTouchDown" data-aaa="111"><text v-bind:data-bbb="item.title">{{item.title}}</text></axi-view>
+                <view v-for="item in list" v-bind:data-index="$index" class="myview" hoverClass="hoverclass" v-on:touchDown="method.doTouchDown" data-aaa="111"><text v-bind:data-bbb="item.title">{{item.title}}</text></view>
                 <box id="aaa"><text>dasdasdas</text></box>
                 <axi-ext-view>
                     <text style="color:red;" v-for="item in list">{{item.title}}</text>
                 </axi-ext-view>
             </axi-scroll-view>
-            </axi-view>
+            </view>
             <axi-tabbar v-if="isShow" v-bind:list="tablist" v-bind:current="tabIndex" v-on:changed="method.tabChange" style="height:50"></axi-tabbar>
             
             
-        </axi-view>
-        <!-- <axi-view id="root" class="rootBox">
+        </view>
+        <!-- <view id="root" class="rootBox">
             <axi-text v-bind:text="title"></axi-text>
                     <axi-swiper-item v-for="pic in pics" mode="single" style="background-color:red;">
                         <axi-image mode="scaleToFill" v-bind:src="pic.src" style="flex:1;" />
                     </axi-swiper-item>
                 
 
-        </axi-view> -->
+        </view> -->
 
     </ui>
 </page>

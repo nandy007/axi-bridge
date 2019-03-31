@@ -170,10 +170,9 @@
     ]]>
     </script>
     <style>
-        axi-view{
+        view{
             display: flex;
-            /* flex-direction: row; */
-            width: 100%;
+            flex-direction: column;
         }
     </style>
     <ui>
