@@ -21,7 +21,7 @@
         MyView.prototype = {
             initProto: function(){
                 var $ = this.$, jsDom = this.jsDom, $jsDom = $(jsDom), comp = this, rootDom = jsDom.getRootElement(), $rootDom = $(rootDom);
-                var $button = $rootDom.children('view');
+                var $button = $rootDom.children('view'), $text = $button.children('text');
                 var $buttonMask = $rootDom.children('#buttonMask'), $buttonLoading = $button.children('#buttonLoading'), buttonLoading = $buttonLoading[0];
 
                 function createSettings(r){
@@ -54,6 +54,14 @@
                 }
                 
                 var props = this.props = {
+                    'text': {
+                        // memo: '显示文本',
+                        type: String,
+                        handler: function (val) {
+                            require('Console').log(val)
+                            $text.text(val||'');
+                        }
+                    },
                     'size': {
                         // memo: '按钮的大小default|mini',
                         type: String,
@@ -310,7 +318,7 @@
             <view class="private-axi-button-view">
                 <!-- <axi-icon id="buttonLoading" content="\uF453"></axi-icon> -->
                 <image id="buttonLoading" src="./load.gif" style="width: 20;height:20;scaleType:cover;opacity:0.6;"></image>
-                <slot></slot>
+                <text></text>
             </view>
             <box id="buttonMask"></box>
         </box>

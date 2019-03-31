@@ -326,7 +326,8 @@
 
                 <axi-test v-bind:list="list" memo="测试对象属性"></axi-test>
 
-                <axi-button id="ttt" data-aaa-bbb="ccc" type="warn" disabled="false" hoverClass="hoverclass" loading="true" v-on:click="method.click"><axi-text text="这是一个button"></axi-text></axi-button>
+                <axi-button id="ttt" data-aaa-bbb="ccc" type="warn" disabled="false" hoverClass="hoverclass" loading="true" v-on:click="method.click" text="这是一个button"></axi-button>
+
                 <view style="padding: 10 0 10 0;flex-direction:column;">
 
                     <view style="flex-direction:row;">
