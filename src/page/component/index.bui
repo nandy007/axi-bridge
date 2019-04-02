@@ -166,13 +166,16 @@
                     time.setTimeout(function() {
                         // $('axi-scroll-view').attr('scroll-into-view', "aaa");
                         // $('#p').attr('percent', 100);
-                        comp.data.percent = 100;
+                        // comp.data.percent = 100;
                         // $('axi-scroll-view').show();
                         // console.log($('axi-scroll-view').css('display'))
                         
                         comp.data.list.push({title:'这是标题4'})
                         comp.setData({
-                            list: comp.data.list
+                            list: comp.data.list,
+                            pics: comp.data.pics,
+                            percent: 100,
+                            isShow: true
                         });
 
                         // viewData.data.inputFocus = true;
@@ -269,6 +272,11 @@
                     inputFocus: false,
                     tabIndex: 1,
                     tablist: [{text:'组件',iconPath:'res:common/image/icon_component.png',selectedIconPath:'res:common/image/icon_component_HL.png'},{text:'接口',iconPath:'res:common/image/icon_API.png',selectedIconPath:'res:common/image/icon_API_HL.png'}]
+                },
+                observers: {
+                    'percent, isShow': function(){
+                        console.log(this.data.percent)
+                    }
                 }
             });
 

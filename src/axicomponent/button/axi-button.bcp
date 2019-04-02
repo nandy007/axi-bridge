@@ -190,20 +190,20 @@
         }
 
         .private-axi-button-view text{
-            font-size: 30;
+            font-size: 20;
         }
         .private-axi-button-mini text{
             font-size: 14;
         }
         .private-axi-button-view axi-text{
-            font-size: 30;
+            font-size: 20;
         }
         .private-axi-button-mini axi-text{
             font-size: 14;
         }
 
         .private-axi-button-view axi-icon{
-            font-size: 30;
+            font-size: 20;
         }
         .private-axi-button-mini axi-icon{
             font-size: 14;
