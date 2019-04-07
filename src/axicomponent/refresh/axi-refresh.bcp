@@ -1,0 +1,157 @@
+<page>
+    <module>
+        <![CDATA[
+    
+        ]]>
+    </module>
+    <script>
+        <![CDATA[
+        var console = require('Console');
+        var time = require('Time');
+
+        var Component = require('../util.js').Component;
+
+        function MyView(){
+
+        }
+        MyView.prototype = {
+            created: function(){
+                var $jsDom = this.$jsDom, $root = this.$root;
+                var $refreshTop = $root.find('#__refresh__top__'),
+                    $refreshToImg = $root.find('#__refresh__top_img__'),
+                    $refreshTopText = $root.find('#__refresh__top_text__');
+
+                var pathPre = 'res:axicomponent/refresh/assets';
+
+                var up3 = {
+                    origin: {
+                        text: '下拉刷新',
+                        img: pathPre + '/dragrefresh_down.png'
+                    },
+                    drag: {
+                        text: '释放刷新',
+                        img: pathPre + '/dragrefresh_up.png'
+                    },
+                    load: {
+                        text: '正在刷新',
+                        img: pathPre + '/dragrefresh_load.gif'
+                    }
+                };
+
+                function setTopStatus(status){
+                    $refreshTopText.text(up3[status].text);
+                    $refreshToImg.attr("src", up3[status].img);
+                }
+                var dis = parseInt($refreshTop.attr('distance')), events = this.events;
+                $refreshTop.on('drag', function(e, param) {
+                    var status = 'origin';
+                    if (param >= 0 && param < dis) {
+                       
+                    } else if (param >= dis) {
+                         status = 'drag';
+                    }
+
+                    setTopStatus(status);
+                    
+
+                }).on('refresh', function(){
+                    setTopStatus('load');
+                    events.pulldown.handler({
+                        refresh: function(){
+                            time.setTimeout(() => {
+                                $refreshTop[0].reset();
+                                // setTopStatus('origin');
+                            }, 50);
+                            
+                        }
+                    });
+                });
+
+                var $refreshBottom = $root.find('#__refresh__bottom__');
+                $refreshBottom.on('refresh', function(){
+                    
+                    events.pullup.handler({
+                        refresh: function(){
+                            time.setTimeout(() => {
+                                $refreshBottom[0].reset();
+                            }, 50);
+                        }
+                    });
+                });
+
+            },
+            initProto: function(){
+                var comp = this;
+                this.events = {
+                    'pulldown': {
+                        handler: function(ctx){
+                            if(!ctx) return;
+                            comp.triggerEvent('pulldown', ctx);
+                        }
+                    },
+                    'pullup': {
+                        handler: function(ctx){
+                            if(!ctx) return;
+                            comp.triggerEvent('pullup', ctx);
+                        }
+                    }
+                };
+
+
+            }
+
+        };
+        module.exports = Component(MyView);
+
+    ]]>
+    </script>
+    <style>
+    axi-refresh{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+    .topRefresh {
+        align-items: center;
+    }
+
+    .refreshBox {
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .refreshImage {
+        width: 40;
+        height: 40;
+        margin: 0 0 0 0;
+        scaleType: cover;
+    }
+
+    .refreshText {
+        width: 100;
+        text-align: center;
+        font-size: 15;
+        color: #c2c2c2;
+    }
+    </style>
+    <ui>
+        <scroll scrollbar="false">
+            <refresh type="top" distance="40" id="__refresh__top__">
+                <box id="__refresh__top_box__" class="refreshBox">
+                    <image id="__refresh__top_img__" class="refreshImage" src="res:axicomponent/refresh/assets/dragrefresh_down.png" />
+                    <text id="__refresh__top_text__" class="refreshText">下拉刷新</text>
+                </box>
+            </refresh>
+            <view>
+                <slot></slot>
+            </view>
+            <refresh type="bottom" id="__refresh__bottom__">
+                <box id="__refresh__bottom_box__" class="refreshBox">
+                    <image id="__refresh__bottom_img__" class="refreshImage" src="res:axicomponent/refresh/assets/dragrefresh_load.gif" />
+                    <text id="__refresh__bottom_text__" class="refreshText">正在加载</text>
+                </box>
+            </refresh>
+        </scroll>
+    </ui>
+</page>

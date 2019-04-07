@@ -23,6 +23,7 @@
             require('../../axicomponent/bar/axi-titlebar.bcp');
             require('../../axicomponent/bar/axi-tabbar.bcp');
             require('../../axicomponent/image/axi-image.bcp');
+            require('../../axicomponent/refresh/axi-refresh.bcp');
 
 
             // var Page = require('../../axicomponent/util.js').Page;
@@ -240,6 +241,14 @@
                     },
                     click: function(e){
                         // console.log(e.currentTarget.dataset)
+                    },
+                    pulldown: function(e){
+                       e.detail.refresh();
+                    },
+                    pullup: function(e){
+                        
+                        e.detail.refresh();
+                        console.log(333)
                     }
                 },
                 data: {
@@ -322,7 +331,8 @@
         <view id="root" class="rootBox">
             <axi-titlebar hideLeftSide="true" title="首页" style="border-bottom-width:1;border-bottom-color:#ececec;"></axi-titlebar>
             <view style="flex:1;padding:4 4 4 4;">
-            <axi-scroll-view v-on:scroll="method.scroll" v-on:scrolltoupper="method.upper" v-on:scrolltolower="method.lower">
+            <!-- <axi-scroll-view v-on:scroll="method.scroll" v-on:scrolltoupper="method.upper" v-on:scrolltolower="method.lower"> -->
+            <axi-refresh type="down" v-on:pulldown="method.pulldown" v-on:pullup="method.pullup">
                 <axi-text v-bind:text="title"></axi-text>
                 <axi-text v-on:tap="method.tap" v-bind:html="html" selectable="true" space="nbsp"></axi-text>
 
@@ -410,7 +420,8 @@
                 <axi-ext-view>
                     <text style="color:red;" v-for="item in list">{{item.title}}</text>
                 </axi-ext-view>
-            </axi-scroll-view>
+            </axi-refresh>
+            <!-- </axi-scroll-view> -->
             </view>
             <axi-tabbar v-if="isShow" v-bind:list="tablist" v-bind:current="tabIndex" v-on:changed="method.tabChange" style="height:50"></axi-tabbar>
             
