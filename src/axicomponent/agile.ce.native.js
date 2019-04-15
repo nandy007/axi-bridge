@@ -1,6 +1,6 @@
 /*
  *	Agile CE 移动前端MVVM框架
- *	Version	:	0.4.74.1554194894191 beta
+ *	Version	:	0.4.77.1555296371640 beta
  *	Author	:	nandy007
  *	License MIT @ https://github.com/nandy007/agile-ce
  */var __ACE__ = {};
@@ -549,6 +549,10 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 				updater.updateShowHide($node, defaultValue, parser.getValue(expression, fors));
 			}, fors);
 		},
+		'vhide': function vhide($node, fors, expression) {
+			var parser = this;
+			parser.vshow.call(parser, $node, fors, '!(' + expression + ')');
+		},
 		'vcif': function vcif($node, fors, expression, dir) {
 			var parser = this,
 			    updater = this.updater;
@@ -679,6 +683,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 					this.vmcheckbox.apply(this, arguments);return;
 				case 'select':
 					this.vmselect.apply(this, arguments);return;
+				case 'switch':
+					this.vmswitch.apply(this, arguments);return;
 			}
 
 			if (this['vm' + type]) {
@@ -738,10 +744,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 			Parser.bindChangeEvent($node, function () {
 				if ($node.isChecked()) {
-					var access = Parser.makeDep(expression, fors, parser.getVmPre());
-					var duplexField = parser.getDuplexField(access),
-					    duplex = duplexField.duplex(parser.$scope),
-					    field = duplexField.field;
+					// var access = Parser.makeDep(expression, fors, parser.getVmPre());
+					// var duplexField = parser.getDuplexField(access), duplex = duplexField.duplex(parser.$scope), field = duplexField.field;
 					duplex[field] = Parser.formatValue($node, $node.val());
 				}
 			});
@@ -778,10 +782,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 			Parser.bindChangeEvent($node, function () {
 
-				var access = Parser.makeDep(expression, fors, parser.getVmPre());
-				var duplexField = parser.getDuplexField(access),
-				    duplex = duplexField.duplex(parser.$scope),
-				    field = duplexField.field;
+				// var access = Parser.makeDep(expression, fors, parser.getVmPre());
+				// var duplexField = parser.getDuplexField(access), duplex = duplexField.duplex(parser.$scope), field = duplexField.field;
 
 				value = duplex[field];
 
@@ -857,10 +859,8 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 			});
 
 			Parser.bindChangeEvent($node, function () {
-				var access = Parser.makeDep(expression, fors, parser.getVmPre());
-				var duplexField = parser.getDuplexField(access),
-				    duplex = duplexField.duplex(parser.$scope),
-				    field = duplexField.field;
+				// var access = Parser.makeDep(expression, fors, parser.getVmPre());
+				// var duplexField = parser.getDuplexField(access), duplex = duplexField.duplex(parser.$scope), field = duplexField.field;
 				var selects = Parser.getSelecteds($(this));
 				duplex[field] = multi ? selects : selects[0];
 			});
@@ -883,11 +883,34 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 			}, fors);
 
 			Parser.bindChangeEvent($node, function () {
-				var access = Parser.makeDep(expression, fors, parser.getVmPre());
-				var duplexField = parser.getDuplexField(access),
-				    duplex = duplexField.duplex(parser.$scope),
-				    field = duplexField.field;
+				// var access = Parser.makeDep(expression, fors, parser.getVmPre());
+				// var duplexField = parser.getDuplexField(access), duplex = duplexField.duplex(parser.$scope), field = duplexField.field;
 				duplex[field] = $node.val();
+			});
+		},
+		'vmswtich': function vmswtich($node, fors, expression, dir) {
+			var parser = this,
+			    updater = this.updater;
+
+			var access = Parser.makeDep(expression, fors, parser.getVmPre());
+
+			var duplexField = parser.getDuplexField(access),
+			    duplex = duplexField.duplex(parser.$scope),
+			    field = duplexField.field;
+
+			if ($node.hasAttr('checked')) {
+				duplex[field] = $node.xprop('checked');
+			} else {
+				updater.updateSwitchChecked($node, duplex[field]);
+			}
+
+			var deps = [access];
+			parser.watcher.watch(deps, function () {
+				updater.updateSwitchChecked($node, duplex[field]);
+			}, fors);
+
+			Parser.bindChangeEvent($node, function () {
+				duplex[field] = $node.xprop('checked');
 			});
 		},
 		'vfilter': function vfilter($node, fors, expression) {
@@ -3708,7 +3731,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 var util = module.exports = {
     isBooleanAttr: function isBooleanAttr(name) {
-        var __booleanAttr = ['disabled', 'checked', 'selected', 'autoplay'];
+        var __booleanAttr = ['disabled', 'checked', 'selected', 'autoplay', 'hidden'];
         return __booleanAttr.indexOf(name) > -1;
     },
     cleanJSON: function cleanJSON(obj) {
@@ -3937,9 +3960,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	/**
   * 设置绑定数据
   */
-	mp.setViewData = function (obj) {
+	mp.setData = function (obj) {
 		var viewData = this.$data;
-		this.extend(viewData, obj || {});
+		for (var k in obj) {
+			var func = new Function('d', 'v', 'try{d.' + k + '=v;}catch(e){console.error(e);}');
+			var v = obj[k];
+			if ((typeof v === 'undefined' ? 'undefined' : _typeof(v)) === 'object') v = JSON.parse(JSON.stringify(v));
+			func(viewData, v);
+		}
+	};
+
+	/**
+  * 设置数据变化回调
+  */
+	mp.dataChange = function (cb) {
+		var _this = this;
+		this.vm.$element.on('__mvvmDataChange', function (e, options) {
+			cb.call(_this, JSON.parse(JSON.stringify(options)));
+		});
 	};
 
 	/**
@@ -4745,6 +4783,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var checkStatus = $.util.isBoolean(values) ? values : values.indexOf(value) > -1;
 
 		if ($checkbox.xprop('checked') != checkStatus) $checkbox.xprop('checked', checkStatus);
+	};
+
+	/**
+  * 更新 swtich 的激活状态 realize v-model
+  * @param   {JQLite/input}          $checkbox
+  * @param   {Boolean}               value      [激活数组或状态]
+  */
+	up.updateSwitchChecked = function ($switch, value) {
+		var checkStatus = !!value;
+		if ($switch.xprop('checked') != checkStatus) $switch.xprop('checked', checkStatus);
 	};
 
 	/**
@@ -5575,7 +5623,7 @@ var BaseComponent = function () {
                 hidden: {
                     type: Boolean,
                     handler: function handler(val) {
-                        $jsDom[val ? 'show' : 'hide']();
+                        $jsDom[val ? 'hide' : 'show']();
                     },
                     init: function init() {
                         if ($jsDom.hasAttr('hidden')) this.handler(comp.getAttrValue('hidden'));

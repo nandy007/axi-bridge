@@ -176,7 +176,8 @@
                             list: comp.data.list,
                             pics: comp.data.pics,
                             percent: 100,
-                            isShow: true
+                            isShow: true,
+                            switchChecked: false
                         });
 
                         // viewData.data.inputFocus = true;
@@ -252,6 +253,7 @@
                     }
                 },
                 data: {
+                    switchChecked: true,
                     inputText: '这是输入内容',
                     cks: ['am'],
                     rd: 'cn',
@@ -349,7 +351,7 @@
                 <view style="padding: 10 0 10 0;flex-direction:column;">
 
                     <view style="flex-direction:row;">
-                        <axi-switch checked="true"></axi-switch>
+                        <axi-switch v-model:swtich="switchChecked"></axi-switch>
                         <axi-switch checked="true" color="red" style="margin: 0 4 0 4;"></axi-switch>
                         <axi-switch disabled="true"></axi-switch>
                     </view>
